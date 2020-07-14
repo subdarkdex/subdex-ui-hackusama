@@ -1,8 +1,8 @@
 {
-  "name": "substrate-front-end-template",
+  "name": "dark-dex-ui",
   "version": "0.1.1",
   "private": true,
-  "author": "Parity Technologies <admin@parity.io>",
+  "author": "Fei Yang <fyang1024@gmail.com>",
   "license": "Unlicense",
   "dependencies": {
     "@polkadot/api": "^1.17.2",
