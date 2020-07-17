@@ -10,6 +10,7 @@ import './app.css';
 import useSubstrate from '../../hooks/useSubstrate';
 import { SubstrateContextProvider } from '../../context';
 import { Grid, Message, Dimmer, Loader } from 'semantic-ui-react';
+import { AccountContextProvider } from '../../context/AccountContext';
 
 function Main () {
   const { apiState, keyringState, apiError } = useSubstrate();
@@ -60,7 +61,9 @@ function Main () {
 export default function App () {
   return (
     <SubstrateContextProvider>
-      <Main />
+      <AccountContextProvider>
+        <Main />
+      </AccountContextProvider>
     </SubstrateContextProvider>
   );
 }
