@@ -1,0 +1,10 @@
+div.hint {
+    display: flex;
+    font-size: 12px;
+    align-items: baseline;
+}
+
+div.hint-text {
+    font-weight: lighter;
+    padding-left: 10px;
+}
