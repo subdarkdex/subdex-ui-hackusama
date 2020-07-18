@@ -1,0 +1,6 @@
+div.panel {
+    width: 350px;
+    height: 440px;
+    padding: 55px 50px;
+    background-image: url(background.png);
+}
