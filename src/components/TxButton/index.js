@@ -3,8 +3,9 @@ import PropTypes from 'prop-types';
 import { Button } from 'semantic-ui-react';
 import { web3FromSource } from '@polkadot/extension-dapp';
 
-import { useSubstrate } from '../';
+import { useSubstrate } from '../../hooks';
 import conversion from '../../utils/conversion';
+import './tx-button.css';
 
 function TxButton ({
   accountPair = null,
@@ -214,7 +215,7 @@ function TxButton ({
       disabled={ disabled || !palletRpc || !callable || !allParamsFilled() ||
       ((isSudo() || isUncheckedSudo()) && !isSudoer(accountPair)) }
     >
-      {label}
+      <span>{label}</span>
     </Button>
   );
 }
