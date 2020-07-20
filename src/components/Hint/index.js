@@ -1,7 +1,8 @@
 import React from 'react';
 import './hint.css';
+import PropTypes from 'prop-types';
 
-export default function Hint (props) {
+function Hint (props) {
   return (
     <div className="hint">
       <div>&#9432;</div>
@@ -9,3 +10,9 @@ export default function Hint (props) {
     </div>
   );
 }
+
+Hint.propTypes = {
+  text: PropTypes.string.isRequired
+};
+
+export default Hint;
