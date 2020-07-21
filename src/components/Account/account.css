@@ -51,7 +51,6 @@ div.ui.dropdown > .text {
     text-overflow: ellipsis;
     width:50%;
     margin-left: 1.2em;
-    margin-right: 0 em;
     border-right: 1px solid #9381ff; /* the vertical splitting line*/
     order:1;
   }
@@ -63,8 +62,6 @@ div.ui.dropdown > .text {
     flex-basis: auto;
     justify-content: center;
     width:50%;
-    margin-left: 0 em;
-    margin-right: 1.2 em;
     order:2;
   }
 

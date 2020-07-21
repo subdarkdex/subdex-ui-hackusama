@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import useSubstrate from '../../hooks/useSubstrate';
+import { AccountContext } from '../../context/AccountContext.js';
 import './account.css';
 import { Dropdown } from 'semantic-ui-react';
 
-function Main (props) {
+function Main () {
   const { keyring } = useSubstrate();
-  const [accountSelected, setAccountSelected] = useState('');
+  const { account, setAccount } = useContext(AccountContext);
 
   // Get the list of accounts we possess the private key for
   const keyringOptions = keyring.getPairs().map(account => ({
@@ -20,12 +21,12 @@ function Main (props) {
 
   // Set the initial address
   useEffect(() => {
-    setAccountSelected(initialAddress);
-  }, [initialAddress]);
+    setAccount(initialAddress);
+  }, [initialAddress, setAccount]);
 
   const onChange = address => {
     // Update state with new account address
-    setAccountSelected(address);
+    setAccount(address);
   };
 
   return (
@@ -37,10 +38,10 @@ function Main (props) {
           onChange={(_, dropdown) => {
             onChange(dropdown.value);
           }}
-          value={accountSelected}
+          value={account}
         />
       </div>
-      <BalanceAnnotation accountSelected={accountSelected} />
+      <BalanceAnnotation accountSelected={account} />
     </div>
   );
 }
@@ -74,7 +75,7 @@ function BalanceAnnotation (props) {
   ) : null;
 }
 
-export default function Account (props) {
+export default function Account () {
   const { api, keyring } = useSubstrate();
-  return keyring.getPairs && api.query ? <Main {...props} /> : null;
+  return keyring.getPairs && api.query ? <Main /> : null;
 }
