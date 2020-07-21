@@ -11,8 +11,9 @@ import useSubstrate from '../../hooks/useSubstrate';
 import { SubstrateContextProvider } from '../../context';
 import { Grid, Message, Dimmer, Loader } from 'semantic-ui-react';
 import { AccountContextProvider } from '../../context/AccountContext';
+import { LabelInput } from '../LabelInput';
 
-function Main () {
+function Main() {
   const { apiState, keyringState, apiError } = useSubstrate();
 
   const loader = text =>
@@ -45,20 +46,31 @@ function Main () {
   return (
     <div ref={contextRef}>
       <HashRouter>
-        <Node/>
-        <Account/>
+        <div style={{ width: '200px' }}>
+          <LabelInput
+            label='Receiver'
+            name='test'
+            placeholder="0x123..."
+            error='there is an error'
+            onValueChange={(e) => {
+              console.log(e.target.value);
+            }}
+          />
+        </div>
+        <Node />
+        <Account />
         <Switch>
-          <Route exact strict path="/swap" component={SwapMarket}/>
-          <Route exact strict path="/pool" component={PoolMarket}/>
-          <Route exact strict path="/take" component={TakeMarket}/>
-          <Route component={RedirectToSwapMarket}/>
+          <Route exact strict path="/swap" component={SwapMarket} />
+          <Route exact strict path="/pool" component={PoolMarket} />
+          <Route exact strict path="/take" component={TakeMarket} />
+          <Route component={RedirectToSwapMarket} />
         </Switch>
       </HashRouter>
     </div>
   );
 }
 
-export default function App () {
+export default function App() {
   return (
     <SubstrateContextProvider>
       <AccountContextProvider>
