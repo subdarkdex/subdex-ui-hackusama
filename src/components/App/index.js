@@ -1,7 +1,5 @@
 import React, { createRef } from 'react';
 import { HashRouter, Route, Switch } from 'react-router-dom';
-import Node from '../Node';
-import Account from '../Account';
 import SwapMarket from '../SwapMarket';
 import PoolMarket from '../PoolMarket';
 import TakeMarket from '../TakeMarket';
@@ -11,6 +9,7 @@ import useSubstrate from '../../hooks/useSubstrate';
 import { SubstrateContextProvider } from '../../context';
 import { Grid, Message, Dimmer, Loader } from 'semantic-ui-react';
 import { AccountContextProvider } from '../../context/AccountContext';
+import Header from '../Header';
 
 function Main () {
   const { apiState, keyringState, apiError } = useSubstrate();
@@ -45,8 +44,7 @@ function Main () {
   return (
     <div ref={contextRef}>
       <HashRouter>
-        <Node/>
-        <Account/>
+        <Header/>
         <Switch>
           <Route exact strict path="/swap" component={SwapMarket}/>
           <Route exact strict path="/pool" component={PoolMarket}/>

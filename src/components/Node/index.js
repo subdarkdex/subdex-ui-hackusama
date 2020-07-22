@@ -1,5 +1,5 @@
 import React from 'react';
 
 export default function Node () {
-  return <></>;
+  return <div>Placeholder</div>;
 }
