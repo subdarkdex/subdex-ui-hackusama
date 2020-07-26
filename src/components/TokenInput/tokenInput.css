@@ -1,0 +1,110 @@
+.TokenInputContainer{
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    border-radius: 1.2em;
+    border: 0.1em solid #9381FF;
+    width: 350px;
+    height: 70px;
+    justify-items: center;
+    font-size: 14px;
+}
+
+.TokenInput_left_items{
+    display: flex;
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: auto;
+    justify-content: center;
+    white-space: nowrap;
+    width: 50%;
+    margin-left: 1.2em;
+    order: 1;
+
+    flex-direction: column;
+    justify-self: flex-start;
+}
+
+
+
+.TokenInput_right_items{
+    display: flex;
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: auto;
+    justify-content: center;
+    white-space: nowrap;
+    width: 50%;
+    margin-left: 1.2em;
+    order:2;
+
+    flex-direction: column;
+    justify-self: flex-end;
+}
+
+
+
+
+
+.DropdonwContainer{
+    order: 2;
+    justify-self: flex-end;
+    height: 50%;
+}
+
+.BalanceContainer{
+    order: 1;
+    justify-self: flex-start;
+    height: 50%;
+}
+
+
+.FormTagContainer{
+    order: 1;
+    justify-self: flex-start;
+    height: 50%;
+
+}
+
+
+.InputContainer{
+    order: 2;
+    justify-self: flex-end;
+    height: 50%;
+}
+
+
+/* hide the arrows of the TokenInput */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+-webkit-appearance: none;
+margin: 0;
+}
+
+
+#tkInput{
+
+background-color:  #070020;
+border-width: 0;
+border-style: none;
+color: #c0fdff;
+
+}
+
+
+.dropdown_item_left{
+
+    
+
+
+}
+
+.dropdown_item_left image, img{
+
+ width: 50px;
+    
+}
+
+
+
+
