@@ -3,6 +3,7 @@ import useSubstrate from '../../hooks/useSubstrate';
 import { AccountContext } from '../../context/AccountContext.js';
 import './account.css';
 import { Dropdown } from 'semantic-ui-react';
+import shorten from '../../utils/address';
 
 function Main () {
   const { keyring } = useSubstrate();
@@ -12,7 +13,7 @@ function Main () {
   const keyringOptions = keyring.getPairs().map(account => ({
     key: account.address,
     value: account.address,
-    text: account.address.substring(0, 4) + '...' + account.address.substring(account.address.length - 5, account.address.length),
+    text: shorten(account.address),
     icon: 'user'
   }));
 

@@ -15,9 +15,9 @@ export default function SwapEvents () {
     <table className="swap-events">
       <thead>
         <tr>
-          <th style={{ width: '35%' }}>Sold</th>
-          <th style={{ width: '35%' }}>Bought</th>
-          <th style={{ width: '30%' }}>Time</th>
+          <th className="swap-events-sold">Sold</th>
+          <th className="swap-events-bought">Bought</th>
+          <th className="swap-events-time">Time</th>
         </tr>
       </thead>
       <tbody>

@@ -73,8 +73,9 @@ const EventsContextProvider = (props) => {
             setTakeEvents(e => {
               const copy = [
                 {
-                  asset: params[0],
-                  amount: params[1],
+                  account: params[0],
+                  asset: params[1],
+                  amount: params[2],
                   time: Date.now()
                 },
                 ...e
