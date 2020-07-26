@@ -10,6 +10,7 @@ import { SubstrateContextProvider } from '../../context';
 import { Grid, Message, Dimmer, Loader } from 'semantic-ui-react';
 import { AccountContextProvider } from '../../context/AccountContext';
 import Header from '../Header';
+import { EventsContextProvider } from '../../context/EventsContext';
 
 function Main () {
   const { apiState, keyringState, apiError } = useSubstrate();
@@ -45,12 +46,14 @@ function Main () {
     <div ref={contextRef}>
       <HashRouter>
         <Header/>
-        <Switch>
-          <Route exact strict path="/swap" component={SwapMarket}/>
-          <Route exact strict path="/pool" component={PoolMarket}/>
-          <Route exact strict path="/take" component={TakeMarket}/>
-          <Route component={RedirectToSwapMarket}/>
-        </Switch>
+        <EventsContextProvider>
+          <Switch>
+            <Route exact strict path="/swap" component={SwapMarket}/>
+            <Route exact strict path="/pool" component={PoolMarket}/>
+            <Route exact strict path="/take" component={TakeMarket}/>
+            <Route component={RedirectToSwapMarket}/>
+          </Switch>
+        </EventsContextProvider>
       </HashRouter>
     </div>
   );
