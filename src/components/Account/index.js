@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useEffect, useContext } from 'react';
 import useSubstrate from '../../hooks/useSubstrate';
 import { AccountContext } from '../../context/AccountContext.js';
 import './account.css';
 import { Dropdown } from 'semantic-ui-react';
 import shorten from '../../utils/address';
+import BalanceAnnotation from '../BalanceAnnotation';
 
 function Main () {
   const { keyring } = useSubstrate();
@@ -42,38 +43,9 @@ function Main () {
           value={account}
         />
       </div>
-      <BalanceAnnotation accountSelected={account} />
+      <BalanceAnnotation address={account} className='account-item-left'/>
     </div>
   );
-}
-
-function BalanceAnnotation (props) {
-  const { accountSelected } = props;
-  const { api } = useSubstrate();
-  const [accountBalance, setAccountBalance] = useState(0);
-
-  // When account address changes, update subscriptions
-  useEffect(() => {
-    let unsubscribe;
-
-    // If the user has selected an address, create a new subscription
-    accountSelected &&
-      api.query.system.account(accountSelected, balance => {
-        setAccountBalance(balance.data.free.toHuman());
-      })
-        .then(unsub => {
-          unsubscribe = unsub;
-        })
-        .catch(console.error);
-
-    return () => unsubscribe && unsubscribe();
-  }, [api, accountSelected]);
-
-  return accountSelected ? (
-    <div className='account-item-left'>
-      {accountBalance}
-    </div>
-  ) : null;
 }
 
 export default function Account () {

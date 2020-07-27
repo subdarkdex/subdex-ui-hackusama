@@ -34,3 +34,7 @@ td {
     text-align: center;
     vertical-align: bottom;
 }
+
+.ui.selection.dropdown>.dropdown.icon {
+    color: #C0FDFFCC;
+}
