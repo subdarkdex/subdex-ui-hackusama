@@ -56,3 +56,7 @@ div.input-and-dropdown>.ui.search.dropdown>.text {
 div.input-and-dropdown>.ui.selection.dropdown>.dropdown.icon {
     right: 0
 }
+
+.input-and-dropdown > .ui.dropdown .menu > .item > .image{
+    margin-bottom: 0.2em;
+}

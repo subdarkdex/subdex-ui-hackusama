@@ -2,12 +2,14 @@ import React from 'react';
 import Tabs from '../Tabs';
 import TokenInput from '../TokenInput';
 import assets from '../../assets';
+import { Header } from 'semantic-ui-react';
 
 export default function Swap () {
-  const options = assets.map(({ assetId, symbol }) => ({
+  const options = assets.map(({ assetId, symbol, logo }) => ({
     key: assetId,
     value: assetId,
-    text: symbol
+    text: symbol,
+    image: logo,
   }));
   return (
     <>
