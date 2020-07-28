@@ -28,6 +28,7 @@ div.input-and-dropdown {
     width: 100%;
     display: flex;
     justify-content: space-between;
+    align-items: center;
 }
 
 div.input-and-dropdown > input {
@@ -36,7 +37,7 @@ div.input-and-dropdown > input {
     font-weight: lighter;
     font-size: 19px;
     color: #C0FDFF;
-    width: 70%;
+    width: 80%;
 }
 
 div.input-and-dropdown > input:focus {
@@ -44,7 +45,8 @@ div.input-and-dropdown > input:focus {
 }
 
 div.input-and-dropdown .ui.fluid.dropdown {
-    width: 25%;
+    width: 20%;
+    padding-left: 0;
 }
 
 div.input-and-dropdown>.ui.search.dropdown>.text {

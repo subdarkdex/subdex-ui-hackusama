@@ -4,13 +4,18 @@ import PropTypes from 'prop-types';
 import { Dropdown } from 'semantic-ui-react';
 import BalanceAnnotation from '../BalanceAnnotation';
 import { AccountContext } from '../../context/AccountContext';
+import { assetMap } from '../../assets';
 
 function TokenInput (props) {
   const { account } = useContext(AccountContext);
-  const { label, options, error, ...rest } = props;
+  const { label, options, error, onChangeAsset, onChangeAmount, ...rest } = props;
   const [assetId, setAssetId] = useState(options[0].value);
-  const onChangeAsset = assetId => {
+  const handleChangeAmount = e => {
+    onChangeAmount && onChangeAmount(e);
+  };
+  const handleChangeAsset = assetId => {
     setAssetId(assetId);
+    onChangeAsset && onChangeAsset(assetId);
   };
   return (
     <div className="token-input-container">
@@ -22,11 +27,12 @@ function TokenInput (props) {
         </div>
       </div>
       <div className="input-and-dropdown">
-        <input {...rest}/>
+        <input onChange={handleChangeAmount} {...rest}/>
+        <img src={assetMap.get(assetId).logo} alt="" width={22} height={22}/>
         <Dropdown fluid search selection
           options={options}
           onChange={(_, dropdown) => {
-            onChangeAsset(dropdown.value);
+            handleChangeAsset(dropdown.value);
           }}
           value={assetId}
         />
@@ -40,6 +46,8 @@ TokenInput.propTypes = {
   placeholder: PropTypes.string,
   error: PropTypes.string,
   options: PropTypes.array.isRequired,
+  onChangeAsset: PropTypes.func,
+  onChangeAmount: PropTypes.func,
   type: PropTypes.string,
   disabled: PropTypes.bool,
   onChange: PropTypes.func,
