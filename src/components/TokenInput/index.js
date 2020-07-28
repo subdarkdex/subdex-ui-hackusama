@@ -28,7 +28,7 @@ function TokenInput (props) {
       </div>
       <div className="input-and-dropdown">
         <input onChange={handleChangeAmount} {...rest}/>
-        <img src={assetMap.get(assetId).logo} alt="" width={22} height={22}/>
+        <img src={assetMap.get(assetId).logo} alt="" width={22}/>
         <Dropdown fluid search selection
           options={options}
           onChange={(_, dropdown) => {

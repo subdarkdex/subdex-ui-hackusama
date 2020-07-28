@@ -5,6 +5,7 @@ import './account.css';
 import { Dropdown } from 'semantic-ui-react';
 import shorten from '../../utils/address';
 import BalanceAnnotation from '../BalanceAnnotation';
+import { KSM_ASSET_ID } from '../../assets';
 
 function Main () {
   const { keyring } = useSubstrate();
@@ -43,7 +44,7 @@ function Main () {
           value={account}
         />
       </div>
-      <BalanceAnnotation address={account} className='account-item-left'/>
+      <BalanceAnnotation address={account} assetId={KSM_ASSET_ID} className='account-item-left'/>
     </div>
   );
 }
