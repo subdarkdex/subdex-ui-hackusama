@@ -1,6 +1,9 @@
 /* override dropdown menu color */
-div.ui.dropdown .menu {
-    background: linear-gradient(#9381ff, #bbf0ff);
+div.ui.selection.dropdown .menu {
+    background: linear-gradient(#9381ff, deepskyblue);
+    width: calc(140% + 2px);
+    left: -40%;
+    border-radius: 0.5em;
 }
 
 /* override the color of the text in the input */
@@ -17,9 +20,9 @@ div.ui.search.dropdown {
     border-radius: 1.2em;
 }
 
-/* override dropdown menue border-radius*/
-div.ui.selection.dropdown .menu {
-    border-radius: 0.5em;
+div.ui.dropdown .menu > .item {
+    display: flex;
+    align-items: center;
 }
 
 

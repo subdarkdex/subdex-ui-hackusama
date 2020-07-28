@@ -44,19 +44,29 @@ div.input-and-dropdown > input:focus {
     outline:0;
 }
 
-div.input-and-dropdown .ui.fluid.dropdown {
+div.input-and-dropdown > .ui.fluid.dropdown {
     width: 20%;
     padding-left: 0;
 }
 
-div.input-and-dropdown>.ui.search.dropdown>.text {
+div.input-and-dropdown > .ui.search.dropdown > .text {
     left: 10px;
 }
 
-div.input-and-dropdown>.ui.selection.dropdown>.dropdown.icon {
+div.input-and-dropdown > .ui.selection.dropdown > .dropdown.icon {
     right: 0
 }
 
-.input-and-dropdown > .ui.dropdown .menu > .item > .image{
-    margin-bottom: 0.2em;
+div.input-and-dropdown > .ui.dropdown .menu > .item {
+    display: flex;
+    align-items: center;
+}
+
+div.input-and-dropdown > .ui.dropdown .menu > .item > .image{
+    width: 22px;
+}
+
+div.input-and-dropdown>.ui.selection.dropdown .menu {
+    width: calc(150% + 2px);
+    left: -50%;
 }

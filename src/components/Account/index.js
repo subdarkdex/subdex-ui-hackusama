@@ -6,6 +6,7 @@ import { Dropdown } from 'semantic-ui-react';
 import shorten from '../../utils/address';
 import BalanceAnnotation from '../BalanceAnnotation';
 import { KSM_ASSET_ID } from '../../assets';
+import Identicon from '@polkadot/react-identicon';
 
 function Main () {
   const { keyring } = useSubstrate();
@@ -16,7 +17,7 @@ function Main () {
     key: account.address,
     value: account.address,
     text: shorten(account.address),
-    icon: 'user'
+    icon: <Identicon value={account.address} theme={'beachball'} size={20} style={{ paddingRight: 10 }}/>
   }));
 
   const initialAddress =
