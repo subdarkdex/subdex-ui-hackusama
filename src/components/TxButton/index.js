@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Button } from 'semantic-ui-react';
+import { Button, BreadcrumbDivider } from 'semantic-ui-react';
 import { web3FromSource } from '@polkadot/extension-dapp';
 
 import { useSubstrate } from '../../hooks';
@@ -206,17 +206,18 @@ function TxButton ({
   };
 
   return (
+    <span className='tranButton'>
     <Button
       color={color}
       style={style}
       type='submit'
-      id='tranButton'
       onClick={transaction}
       disabled={ disabled || !palletRpc || !callable || !allParamsFilled() ||
       ((isSudo() || isUncheckedSudo()) && !isSudoer(accountPair)) }
     >
       <span>{label}</span>
     </Button>
+    </span>
   );
 }
 
