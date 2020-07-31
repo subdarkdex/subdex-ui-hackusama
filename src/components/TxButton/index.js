@@ -207,10 +207,10 @@ function TxButton ({
 
   return (
     <Button
-      basic
       color={color}
       style={style}
       type='submit'
+      id='tranButton'
       onClick={transaction}
       disabled={ disabled || !palletRpc || !callable || !allParamsFilled() ||
       ((isSudo() || isUncheckedSudo()) && !isSudoer(accountPair)) }
