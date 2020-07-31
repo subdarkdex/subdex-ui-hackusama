@@ -206,8 +206,8 @@ function TxButton ({
   };
 
   return (
+    <span className='tranButton'>
     <Button
-      basic
       color={color}
       style={style}
       type='submit'
@@ -217,6 +217,7 @@ function TxButton ({
     >
       <span>{label}</span>
     </Button>
+    </span>
   );
 }
 

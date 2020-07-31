@@ -1,4 +1,4 @@
-button {
+.tranButton .ui.button{
     width: 177px;
     height: 45px;
     border: 1px solid #9381FF;
@@ -13,26 +13,27 @@ button {
     transition-duration: 0.4s;
 }
 
-button:focus {
+.tranButton .ui.button:focus {
     outline:0;
 }
 
-button:hover {
+.tranButton .ui.button:hover {
     cursor: pointer;
+    background-color: #7401b8;
 }
 
-button:active {
+.tranButton .ui.button:active {
     background-color: blueviolet;
 }
 
-button span {
+.tranButton .ui.button span {
     cursor: pointer;
     display: inline-block;
     position: relative;
     transition: 0.5s;
 }
 
-button span:after {
+.tranButton .ui.button span:after {
     content: '\00bb';
     position: absolute;
     opacity: 0;
@@ -41,29 +42,29 @@ button span:after {
     transition: 0.5s;
 }
 
-button:hover span {
+.tranButton .ui.button:hover span {
     padding-right: 15px;
 }
 
-button:hover span:after {
+.tranButton .ui.button:hover span:after {
     opacity: 1;
     right: 0;
 }
 
-button[disabled] {
+.tranButton .ui.button[disabled] {
     color: #A0A0A0;
 }
 
-button[disabled]:hover {
+.tranButton .ui.button[disabled]:hover {
     cursor: default;
     background-color: #7401b8;
 }
 
-button[disabled] span {
+.tranButton .ui.button[disabled] span {
     cursor: default;
 }
 
-button[disabled] span:after {
+.tranButton .ui.button[disabled] span:after {
     content: '';
     position: absolute;
     opacity: 0;
@@ -72,6 +73,6 @@ button[disabled] span:after {
     transition: 0.5s;
 }
 
-button[disabled]:hover span {
+.tranButton .ui.button[disabled]:hover span {
     padding-right: 0;
 }
