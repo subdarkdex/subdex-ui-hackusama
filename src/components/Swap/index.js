@@ -35,7 +35,7 @@ export default function Swap () {
     let assetErrored;
     if (assetId === toAsset) {
       setFromAssetError('it cannot be the same asset');
-      assetErrored = true
+      assetErrored = true;
     } else {
       assetErrored = false;
     }

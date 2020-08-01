@@ -8,7 +8,7 @@ import { assetMap } from '../../assets';
 
 function TokenInput (props) {
   const { account } = useContext(AccountContext);
-  const { label, asset, options, error, onChangeAsset, onChangeAmount, ...rest } = props;
+  const { label, asset, options, error, onChangeAsset, onChangeAmount, dropdownDisabled, ...rest } = props;
   const [assetId, setAssetId] = useState(asset);
   const handleChangeAsset = assetId => {
     setAssetId(assetId);
@@ -26,8 +26,12 @@ function TokenInput (props) {
       <div className="input-and-dropdown">
         <input onChange={onChangeAmount} {...rest}/>
         <img src={assetMap.get(assetId).logo} alt="" width={22}/>
-        <Dropdown fluid search selection
+        <Dropdown
+          fluid
+          search
+          selection
           options={options}
+          disabled={dropdownDisabled}
           onChange={(_, dropdown) => {
             handleChangeAsset(dropdown.value);
           }}
@@ -48,7 +52,7 @@ TokenInput.propTypes = {
   onChangeAmount: PropTypes.func,
   type: PropTypes.string,
   disabled: PropTypes.bool,
-  onChange: PropTypes.func,
+  dropdownDisabled: PropTypes.bool,
   tabIndex: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
 };
 
