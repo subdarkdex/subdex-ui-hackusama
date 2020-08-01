@@ -3,6 +3,7 @@ import Tabs from '../Tabs';
 import OptionButton from '../OptionButton';
 import PoolInvest from '../PoolInvest';
 import './pool.css';
+import PoolLaunch from '../PoolLaunch';
 
 export default function Pool () {
   const [option, setOption] = useState('invest');
@@ -21,6 +22,7 @@ export default function Pool () {
         </OptionButton>
       </div>
       { option === 'invest' && <PoolInvest/> }
+      { option === 'launch' && <PoolLaunch/> }
     </>
   );
 }

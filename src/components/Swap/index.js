@@ -106,7 +106,7 @@ export default function Swap () {
           error={fromAssetError}
           onChangeAmount={e => handleChangeFromAssetAmount(e.target.value)}
           onChangeAsset={(assetId) => handleChangeFromAsset(assetId)}
-          asset={KSM_ASSET_ID}
+          asset={fromAsset}
         />
         <TokenInput
           options={options}
@@ -115,7 +115,7 @@ export default function Swap () {
           error={toAssetError}
           onChangeAmount={e => handleChangeToAssetAmount(e.target.value)}
           onChangeAsset={(assetId) => handleChangeToAsset(assetId)}
-          asset={EDG_ASSET_ID}
+          asset={toAsset}
           amount={toAssetAmount}
         />
         <div>

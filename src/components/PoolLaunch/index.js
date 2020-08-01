@@ -6,13 +6,13 @@ import LabelOutput from '../LabelOutput';
 import { TxButton } from '../TxButton';
 import useSubstrate from '../../hooks/useSubstrate';
 import { AccountContext } from '../../context/AccountContext';
-import './pool-invest.css';
+import './pool-launch.css';
 
-export default function PoolInvest () {
+export default function PoolLaunch () {
   const { keyring } = useSubstrate();
   const { account } = useContext(AccountContext);
   const accountPair = account && keyring.getPair(account);
-  const defaultHint = 'Invest your tokens to the liquidity pool and earn 3% of the trading fees';
+  const defaultHint = 'Cannot find the pool? Add the desirable token pair and become its first liquidity provider';
   const [status, setStatus] = useState('');
   const [hint, setHint] = useState(defaultHint);
   const [ksmAmount, setKsmAmount] = useState(0);
@@ -20,8 +20,7 @@ export default function PoolInvest () {
   const [toAsset, setToAsset] = useState(EDG_ASSET_ID);
   const [toAssetAmount, setToAssetAmount] = useState(0);
   const [toAssetError, setToAssetError] = useState('');
-  const [poolInfo, setPoolInfo] = useState('');
-  const [sharesInfo, setSharesInfo] = useState('');
+  const [priceInfo, setPriceInfo] = useState('');
   const validateKsmAsset = (amount) => {
     if (amount && isNaN(amount)) {
       setKsmAssetError('invalid amount');
@@ -61,7 +60,7 @@ export default function PoolInvest () {
     image: logo
   }));
   return (
-    <div className='pool-invest-container'>
+    <div className='pool-launch-container'>
       <Hint text={hint}/>
       <TokenInput
         options={fromAssetOptions}
@@ -79,24 +78,24 @@ export default function PoolInvest () {
           error={toAssetError}
           onChangeAmount={e => handleChangeToAssetAmount(e.target.value)}
           onChangeAsset={(assetId) => handleChangeToAsset(assetId)}
-          asset={EDG_ASSET_ID}
+          asset={toAsset}
           amount={toAssetAmount}
         />
-        <LabelOutput label='Current pool' value={poolInfo}/>
-        <LabelOutput label='Your shares' value={sharesInfo}/>
+        <LabelOutput label='Initial price' value={priceInfo}/>
+        <LabelOutput label='Your shares' value='100%'/>
       </div>
       <TxButton
         accountPair={accountPair}
         disabled={!ksmAssetError && !toAssetError}
         attrs={{
           palletRpc: 'dexPalletModule',
-          callable: 'invest',
+          callable: 'initializeNew',
           inputParams: [ksmAmount, toAsset, toAssetAmount],
           paramFields: [false, false, false, false]
         }}
         setStatus={setStatus}
         type='SIGNED-TX'
-        label='Invest'
+        label='Launch'
       />
     </div>
   );
