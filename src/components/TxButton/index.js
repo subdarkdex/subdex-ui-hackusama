@@ -207,16 +207,16 @@ function TxButton ({
 
   return (
     <span className='tranButton'>
-    <Button
-      color={color}
-      style={style}
-      type='submit'
-      onClick={transaction}
-      disabled={ disabled || !palletRpc || !callable || !allParamsFilled() ||
+      <Button
+        color={color}
+        style={style}
+        type='submit'
+        onClick={transaction}
+        disabled={ disabled || !palletRpc || !callable || !allParamsFilled() ||
       ((isSudo() || isUncheckedSudo()) && !isSudoer(accountPair)) }
-    >
-      <span>{label}</span>
-    </Button>
+      >
+        <span>{label}</span>
+      </Button>
     </span>
   );
 }
