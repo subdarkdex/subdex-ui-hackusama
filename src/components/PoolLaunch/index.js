@@ -6,7 +6,6 @@ import LabelOutput from '../LabelOutput';
 import { TxButton } from '../TxButton';
 import useSubstrate from '../../hooks/useSubstrate';
 import { AccountContext } from '../../context/AccountContext';
-import './pool-launch.css';
 
 export default function PoolLaunch () {
   const { keyring } = useSubstrate();
@@ -60,7 +59,7 @@ export default function PoolLaunch () {
     image: logo
   }));
   return (
-    <div className='pool-launch-container'>
+    <div className='pool-inputs-container'>
       <Hint text={hint}/>
       <TokenInput
         options={fromAssetOptions}
@@ -86,7 +85,7 @@ export default function PoolLaunch () {
       </div>
       <TxButton
         accountPair={accountPair}
-        disabled={!ksmAssetError && !toAssetError}
+        disabled={ksmAssetError || toAssetError}
         attrs={{
           palletRpc: 'dexPalletModule',
           callable: 'initializeNew',

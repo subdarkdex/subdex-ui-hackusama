@@ -131,7 +131,7 @@ export default function Swap () {
         </div>
         <TxButton
           accountPair={accountPair}
-          disabled={!fromAssetError && !toAssetError}
+          disabled={fromAssetError || toAssetError}
           attrs={{
             palletRpc: 'dexPalletModule',
             callable: 'ksmToTokenSwap',

@@ -6,7 +6,6 @@ import LabelOutput from '../LabelOutput';
 import { TxButton } from '../TxButton';
 import useSubstrate from '../../hooks/useSubstrate';
 import { AccountContext } from '../../context/AccountContext';
-import './pool-invest.css';
 
 export default function PoolInvest () {
   const { keyring } = useSubstrate();
@@ -44,10 +43,6 @@ export default function PoolInvest () {
     setToAssetAmount(amount);
     validateToAsset(amount, toAsset);
   };
-  const handleChangeToAsset = (assetId) => {
-    setToAsset(assetId);
-    validateToAsset(toAssetAmount, assetId);
-  };
   const fromAssetOptions = assets.filter(asset => asset.assetId === KSM_ASSET_ID).map(({ assetId, symbol, logo }) => ({
     key: assetId,
     value: assetId,
@@ -61,7 +56,7 @@ export default function PoolInvest () {
     image: logo
   }));
   return (
-    <div className='pool-invest-container'>
+    <div className='pool-inputs-container'>
       <Hint text={hint}/>
       <TokenInput
         options={fromAssetOptions}
@@ -78,8 +73,8 @@ export default function PoolInvest () {
           placeholder='0.0'
           error={toAssetError}
           onChangeAmount={e => handleChangeToAssetAmount(e.target.value)}
-          onChangeAsset={(assetId) => handleChangeToAsset(assetId)}
-          asset={EDG_ASSET_ID}
+          onChangeAsset={setToAsset}
+          asset={toAsset}
           amount={toAssetAmount}
         />
         <LabelOutput label='Current pool' value={poolInfo}/>
@@ -87,7 +82,7 @@ export default function PoolInvest () {
       </div>
       <TxButton
         accountPair={accountPair}
-        disabled={!ksmAssetError && !toAssetError}
+        disabled={ksmAssetError || toAssetError}
         attrs={{
           palletRpc: 'dexPalletModule',
           callable: 'invest',
