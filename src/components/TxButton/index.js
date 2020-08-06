@@ -32,15 +32,15 @@ function TxButton ({
   const isRpc = () => type === 'RPC';
   const isConstant = () => type === 'CONSTANT';
 
-  const loadSudoKey = () => {
-    (async function () {
-      if (!api) { return; }
-      const sudoKey = await api.query.sudo.key();
-      sudoKey.isEmpty ? setSudoKey(null) : setSudoKey(sudoKey.toString());
-    })();
-  };
+  // const loadSudoKey = () => {
+  //   (async function () {
+  //     if (!api) { return; }
+  //     const sudoKey = await api.query.sudo.key();
+  //     sudoKey.isEmpty ? setSudoKey(null) : setSudoKey(sudoKey.toString());
+  //   })();
+  // };
 
-  useEffect(loadSudoKey, [api]);
+  // useEffect(loadSudoKey, [api]);
 
   const getFromAcct = async () => {
     const {
