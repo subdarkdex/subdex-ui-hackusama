@@ -3,5 +3,9 @@ table.pool-events {
 }
 
 table.pool-events th {
-    width: 25%;
+    width: 23%;
+}
+
+table.pool-events th.time {
+    width: 31%;
 }

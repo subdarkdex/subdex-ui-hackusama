@@ -1,4 +1,5 @@
 div.hint {
+    width: 100%;
     display: flex;
     font-size: 12px;
     align-items: baseline;
@@ -6,6 +7,8 @@ div.hint {
 }
 
 div.hint-text {
+    width: 95%;
     font-weight: lighter;
     padding-left: 10px;
+    word-wrap: break-word;
 }

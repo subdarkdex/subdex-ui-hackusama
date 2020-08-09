@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react';
 import useSubstrate from '../hooks/useSubstrate';
+import { assetMap } from '../assets';
 
 const QUEUE_LENGTH = 19;
 
@@ -21,9 +22,9 @@ const EventsContextProvider = (props) => {
             setSwapEvents(e => {
               const copy = [
                 {
-                  soldAsset: params[0],
+                  soldAsset: assetMap.get(params[0]).symbol,
                   soldAmount: params[1],
-                  boughtAsset: params[2],
+                  boughtAsset: assetMap.get(params[2]).symbol,
                   boughtAmount: params[3],
                   time: Date.now()
                 },
@@ -40,8 +41,8 @@ const EventsContextProvider = (props) => {
               const copy = [
                 {
                   type: 'Add',
-                  asset: params[0],
-                  shares: params[1],
+                  asset: assetMap.get(params[1]).symbol,
+                  shares: params[2],
                   time: Date.now()
                 },
                 ...e
@@ -57,8 +58,8 @@ const EventsContextProvider = (props) => {
               const copy = [
                 {
                   type: 'Remove',
-                  asset: params[0],
-                  shares: params[1],
+                  asset: assetMap.get(params[1]).symbol,
+                  shares: params[2],
                   time: Date.now()
                 },
                 ...e
@@ -74,7 +75,7 @@ const EventsContextProvider = (props) => {
               const copy = [
                 {
                   account: params[0],
-                  asset: params[1],
+                  asset: assetMap.get(params[1]).symbol,
                   amount: params[2],
                   time: Date.now()
                 },

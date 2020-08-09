@@ -1,96 +1,147 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import Hint from '../Hint';
-import assets, { EDG_ASSET_ID, KSM_ASSET_ID } from '../../assets';
+import assets, { assetMap, EDG_ASSET_ID, KSM_ASSET_ID } from '../../assets';
 import TokenInput from '../TokenInput';
 import LabelOutput from '../LabelOutput';
 import { TxButton } from '../TxButton';
 import useSubstrate from '../../hooks/useSubstrate';
 import { AccountContext } from '../../context/AccountContext';
+import { convertAmount } from '../../utils/conversion';
 
 export default function PoolLaunch () {
-  const { keyring } = useSubstrate();
+  const { api, keyring } = useSubstrate();
   const { account } = useContext(AccountContext);
   const accountPair = account && keyring.getPair(account);
   const defaultHint = 'Cannot find the pool? Add the desirable token pair and become its first liquidity provider';
-  const [status, setStatus] = useState('');
   const [hint, setHint] = useState(defaultHint);
-  const [ksmAmount, setKsmAmount] = useState(0);
+  const [status, setStatus] = useState('');
+  const [ksmAmount, setKsmAmount] = useState(null);
   const [ksmAssetError, setKsmAssetError] = useState('');
-  const [toAsset, setToAsset] = useState(EDG_ASSET_ID);
-  const [toAssetAmount, setToAssetAmount] = useState(0);
-  const [toAssetError, setToAssetError] = useState('');
+  const [asset, setAsset] = useState(EDG_ASSET_ID);
+  const [assetAmount, setAssetAmount] = useState(null);
+  const [assetError, setAssetError] = useState('');
   const [priceInfo, setPriceInfo] = useState('');
+  const [exchangeExists, setExchangeExists] = useState(false);
+
+  useEffect(() => {
+    if (assetError || ksmAssetError) {
+      setPriceInfo('');
+    } else {
+      if (ksmAmount && assetAmount) {
+        setPriceInfo(`${getPrice(ksmAmount, assetAmount)} ${assetMap.get(asset).symbol} / KSM`);
+      }
+    }
+  }, [ksmAmount, asset, assetAmount, ksmAssetError]);
+
+  useEffect(() => {
+    setHint(status);
+  }, [status]);
+
+  useEffect(() => {
+    let unsubscribe;
+    api.query.dexPallet.exchanges(asset, (exchange) => {
+      console.log('invariant', exchange.get('invariant').toString());
+      if (exchange.get('invariant').toString() !== '0') {
+        setExchangeExists(true);
+        setHint(`There is already liquidity for ${assetMap.get(asset).symbol} now, please click Invest button to add more liquidity`);
+      } else {
+        setExchangeExists(false);
+        setHint(defaultHint);
+      }
+    }).then(unsub => {
+      unsubscribe = unsub;
+    }).catch(console.error);
+    return () => unsubscribe && unsubscribe();
+  }, [asset]);
+
+  const getPrice = (ksmAmount, assetAmount) => {
+    return (Number.parseFloat(assetAmount) / Number.parseFloat(ksmAmount)).toFixed(6);
+  };
+
   const validateKsmAsset = (amount) => {
-    if (amount && isNaN(amount)) {
+    if (amount && (isNaN(amount) || Number.parseFloat(amount) <= 0)) {
       setKsmAssetError('invalid amount');
     } else {
       setKsmAssetError('');
     }
   };
-  const validateToAsset = (amount) => {
-    if (amount && isNaN(amount)) {
-      setToAssetError('invalid amount');
+
+  const validateAsset = (amount) => {
+    if (amount && (isNaN(amount) || Number.parseFloat(amount) <= 0)) {
+      setAssetError('invalid amount');
     } else {
-      setToAssetError('');
+      setAssetError('');
     }
   };
+
   const handleChangeKsmAmount = (amount) => {
     setKsmAmount(amount);
     validateKsmAsset(amount);
   };
-  const handleChangeToAssetAmount = (amount) => {
-    setToAssetAmount(amount);
-    validateToAsset(amount, toAsset);
+
+  const handleChangeAssetAmount = (amount) => {
+    setAssetAmount(amount);
+    validateAsset(amount, asset);
   };
-  const handleChangeToAsset = (assetId) => {
-    setToAsset(assetId);
-    validateToAsset(toAssetAmount, assetId);
+
+  const handleChangeAsset = (assetId) => {
+    setAsset(assetId);
+    setStatus('');
+    validateAsset(assetAmount, assetId);
   };
-  const fromAssetOptions = assets.filter(asset => asset.assetId === KSM_ASSET_ID).map(({ assetId, symbol, logo }) => ({
+
+  const ksmAssetOptions = assets.filter(asset => asset.assetId === KSM_ASSET_ID).map(({ assetId, symbol, logo }) => ({
     key: assetId,
     value: assetId,
     text: symbol,
     image: logo
   }));
-  const toAssetOptions = assets.filter(asset => asset.assetId !== KSM_ASSET_ID).map(({ assetId, symbol, logo }) => ({
+
+  const assetOptions = assets.filter(asset => asset.assetId !== KSM_ASSET_ID).map(({ assetId, symbol, logo }) => ({
     key: assetId,
     value: assetId,
     text: symbol,
     image: logo
   }));
+
+  const inProgress = () => {
+    return !!status && !status.startsWith('Finalized') && !status.startsWith('Error');
+  };
+
   return (
     <div className='pool-inputs-container'>
       <Hint text={hint}/>
       <TokenInput
-        options={fromAssetOptions}
+        options={ksmAssetOptions}
         label='Deposit'
         placeholder='0.0'
         error={ksmAssetError}
         onChangeAmount={e => handleChangeKsmAmount(e.target.value)}
         asset={KSM_ASSET_ID}
+        amount={ksmAmount}
       />
       <div>
         <TokenInput
-          options={toAssetOptions}
+          options={assetOptions}
           label='Deposit'
           placeholder='0.0'
-          error={toAssetError}
-          onChangeAmount={e => handleChangeToAssetAmount(e.target.value)}
-          onChangeAsset={(assetId) => handleChangeToAsset(assetId)}
-          asset={toAsset}
-          amount={toAssetAmount}
+          error={assetError}
+          onChangeAmount={e => handleChangeAssetAmount(e.target.value)}
+          onChangeAsset={(assetId) => handleChangeAsset(assetId)}
+          asset={asset}
+          amount={assetAmount}
         />
         <LabelOutput label='Initial price' value={priceInfo}/>
         <LabelOutput label='Your shares' value='100%'/>
       </div>
       <TxButton
         accountPair={accountPair}
-        disabled={ksmAssetError || toAssetError}
+        disabled={ksmAssetError || assetError || exchangeExists || inProgress()}
         attrs={{
-          palletRpc: 'dexPalletModule',
-          callable: 'initializeNew',
-          inputParams: [ksmAmount, toAsset, toAssetAmount],
-          paramFields: [false, false, false, false]
+          palletRpc: 'dexPallet',
+          callable: 'initializeExchange',
+          inputParams: [convertAmount(KSM_ASSET_ID, ksmAmount), asset, convertAmount(asset, assetAmount)],
+          paramFields: [false, false, false]
         }}
         setStatus={setStatus}
         type='SIGNED-TX'

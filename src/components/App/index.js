@@ -11,6 +11,7 @@ import { Grid, Message, Dimmer, Loader } from 'semantic-ui-react';
 import { AccountContextProvider } from '../../context/AccountContext';
 import Header from '../Header';
 import { EventsContextProvider } from '../../context/EventsContext';
+import DeveloperConsole from '../DeveloperConsole';
 
 function Main () {
   const { apiState, keyringState, apiError } = useSubstrate();
@@ -55,6 +56,7 @@ function Main () {
           </Switch>
         </EventsContextProvider>
       </HashRouter>
+      <DeveloperConsole/>
     </div>
   );
 }

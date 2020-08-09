@@ -18,16 +18,16 @@ export default function PoolEvents () {
           <th>Type</th>
           <th>Pair</th>
           <th>Shares</th>
-          <th>Time</th>
+          <th className="time">Time</th>
         </tr>
       </thead>
       <tbody>
         <tr>
           <td colSpan={4}>&nbsp;</td>
         </tr>
-        {poolEvents.map(({ type, asset, shares, time }) =>
+        {poolEvents.map(({ type, asset, shares, time }, index) =>
           (
-            <tr>
+            <tr key={index}>
               <td>{type}</td>
               <td>{asset}/KSM</td>
               <td>{shares}</td>
