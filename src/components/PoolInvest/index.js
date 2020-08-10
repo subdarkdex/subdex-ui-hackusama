@@ -7,6 +7,7 @@ import { TxButton } from '../TxButton';
 import useSubstrate from '../../hooks/useSubstrate';
 import { AccountContext } from '../../context/AccountContext';
 import { convertBalance } from '../../utils/conversion';
+import BigNumber from 'bignumber.js';
 
 export default function PoolInvest () {
   const { api, keyring } = useSubstrate();
@@ -41,20 +42,23 @@ export default function PoolInvest () {
       } else {
         setExchangeExists(true);
         setHint(defaultHint);
-        const convertedKsmPool = convertBalance(KSM_ASSET_ID, exchange.get('ksm_pool').toString());
-        setKsmPool(convertedKsmPool);
-        let convertedTokenPool = convertBalance(asset, exchange.get('token_pool').toString());
-        setTokenPool(convertedTokenPool);
-        setPoolInfo(`${convertedKsmPool} KSM + ${convertedTokenPool} ${assetMap.get(asset).symbol}`);
-        setTotalShares(exchange.get('total_shares').toNumber());
-        const sharesInfo = exchange.get('shares').get(account);
-        setSharesInfo(sharesInfo);
+        const ksmPoolStr = exchange.get('ksm_pool').toString();
+        const ksmPoolBalance = convertBalance(KSM_ASSET_ID, ksmPoolStr);
+        setKsmPool(ksmPoolStr);
+        const tokenPoolStr = exchange.get('token_pool').toString();
+        const tokenPoolBalance = convertBalance(asset, tokenPoolStr);
+        setTokenPool(tokenPoolStr);
+        setPoolInfo(`${ksmPoolBalance} KSM + ${tokenPoolBalance} ${assetMap.get(asset).symbol}`);
+        const totalSharesNumber = exchange.get('total_shares').toNumber();
+        setTotalShares(totalSharesNumber);
+        const sharesInfo = JSON.parse(exchange.get('shares').toString());
+        setSharesInfo(sharesInfo[account] ? `${sharesInfo[account] * 100 / totalSharesNumber} %` : '0');
       }
     }).then(unsub => {
       unsubscribe = unsub;
     }).catch(console.error);
     return () => unsubscribe && unsubscribe();
-  }, [asset]);
+  }, [asset, account]);
 
   useEffect(() => {
     setHint(status);
@@ -65,8 +69,9 @@ export default function PoolInvest () {
 
   useEffect(() => {
     if (!ksmAssetError && ksmAmount && ksmPool && tokenPool && totalShares) {
-      setAssetAmount((ksmAmount * tokenPool.toNumber() / ksmPool.toNumber()).toString());
-      setShares(ksmAmount * totalShares / ksmPool.toNumber());
+      setAssetAmount(new BigNumber(tokenPool).multipliedBy(ksmAmount).div(ksmPool).toString());
+      setShares(new BigNumber(ksmAmount).multipliedBy(totalShares)
+        .multipliedBy(new BigNumber(10).pow(assetMap.get(KSM_ASSET_ID).decimals)).div(ksmPool).toNumber());
     } else {
       setAssetAmount('');
       setShares(0);
@@ -75,8 +80,9 @@ export default function PoolInvest () {
 
   useEffect(() => {
     if (!assetError && assetAmount && ksmPool && tokenPool && totalShares) {
-      setKsmAmount((assetAmount * ksmPool.toNumber() / tokenPool.toNumber()).toString());
-      setShares(assetAmount * totalShares / tokenPool.toNumber());
+      setKsmAmount(new BigNumber(ksmPool).multipliedBy(assetAmount).div(tokenPool).toString());
+      setShares(new BigNumber(assetAmount).multipliedBy(totalShares)
+        .multipliedBy(new BigNumber(10).pow(assetMap.get(asset).decimals)).div(tokenPool).toNumber());
     } else {
       setKsmAmount('');
       setShares(0);

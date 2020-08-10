@@ -1,5 +1,5 @@
 import { assetMap } from '../assets';
-import BN from 'bn.js';
+import BigNumber from 'bignumber.js';
 
 const conversion = {
   paramConversion: {
@@ -24,9 +24,9 @@ const convertBalance = (assetId, balance) => {
   if (!balance) {
     return null;
   }
-  const bn = new BN(balance);
+  const bn = new BigNumber(balance);
   const decimals = assetMap.get(assetId).decimals;
-  const denominator = new BN(10).pow(new BN(decimals));
+  const denominator = new BigNumber(10).pow(decimals);
   return bn.div(denominator);
 };
 

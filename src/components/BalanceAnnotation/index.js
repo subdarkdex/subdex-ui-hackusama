@@ -33,7 +33,7 @@ function BalanceAnnotation (props) {
 
 BalanceAnnotation.propTypes = {
   assetId: PropTypes.string.isRequired,
-  address: PropTypes.string.isRequired,
+  address: PropTypes.string,
   className: PropTypes.string,
   label: PropTypes.string,
   showAssetSymbol: PropTypes.bool
