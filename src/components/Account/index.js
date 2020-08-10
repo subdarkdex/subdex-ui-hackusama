@@ -45,7 +45,7 @@ function Main () {
           value={account}
         />
       </div>
-      <BalanceAnnotation address={account} assetId={KSM_ASSET_ID} className='account-item-left'/>
+      <BalanceAnnotation address={account} assetId={KSM_ASSET_ID} showAssetSymbol={true} className='account-item-left'/>
     </div>
   );
 }
