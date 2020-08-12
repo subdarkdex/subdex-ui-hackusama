@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from 'react';
 import { EventsContext } from '../../context/EventsContext';
 import './swap-events.css';
 import describe from '../../utils/time';
-import { convertBalance, shortenBalance } from '../../utils/conversion';
+import { convertBalance, shortenNumber } from '../../utils/conversion';
 import { assetMap } from '../../assets';
 import { Tooltip } from 'react-tippy';
 
@@ -38,7 +38,7 @@ export default function SwapEvents () {
                   trigger='mouseenter'
                   arrow={true}
                 >
-                  {shortenBalance(convertBalance(soldAssetId, soldAmount).toString())}
+                  {shortenNumber(convertBalance(soldAssetId, soldAmount).toString())}
                 </Tooltip>
                 {assetMap.get(soldAssetId).symbol}
               </td>
@@ -51,7 +51,7 @@ export default function SwapEvents () {
                   trigger='mouseenter'
                   arrow={true}
                 >
-                  {shortenBalance(convertBalance(boughtAssetId, boughtAmount).toString())}
+                  {shortenNumber(convertBalance(boughtAssetId, boughtAmount).toString())}
                 </Tooltip>
                 {assetMap.get(boughtAssetId).symbol}
               </td>

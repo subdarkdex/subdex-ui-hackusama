@@ -6,7 +6,7 @@ import LabelOutput from '../LabelOutput';
 import { TxButton } from '../TxButton';
 import useSubstrate from '../../hooks/useSubstrate';
 import { AccountContext } from '../../context/AccountContext';
-import { convertBalance, shortenBalance } from '../../utils/conversion';
+import { convertBalance, shortenNumber } from '../../utils/conversion';
 import BigNumber from 'bignumber.js';
 
 export default function PoolInvest () {
@@ -43,10 +43,10 @@ export default function PoolInvest () {
         setExchangeExists(true);
         setHint(defaultHint);
         const ksmPoolStr = exchange.get('ksm_pool').toString();
-        const ksmPoolBalance = shortenBalance(convertBalance(KSM_ASSET_ID, ksmPoolStr).toString());
+        const ksmPoolBalance = shortenNumber(convertBalance(KSM_ASSET_ID, ksmPoolStr).toString());
         setKsmPool(ksmPoolStr);
         const tokenPoolStr = exchange.get('token_pool').toString();
-        const tokenPoolBalance = shortenBalance(convertBalance(asset, tokenPoolStr).toString());
+        const tokenPoolBalance = shortenNumber(convertBalance(asset, tokenPoolStr).toString());
         setTokenPool(tokenPoolStr);
         setPoolInfo(`${ksmPoolBalance} KSM + ${tokenPoolBalance} ${assetMap.get(asset).symbol}`);
         const totalSharesNumber = exchange.get('total_shares').toNumber();
@@ -58,7 +58,7 @@ export default function PoolInvest () {
       unsubscribe = unsub;
     }).catch(console.error);
     return () => unsubscribe && unsubscribe();
-  }, [asset, account]);
+  }, [asset, account, api.query.dexPallet]);
 
   useEffect(() => {
     setHint(status);

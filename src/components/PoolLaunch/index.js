@@ -6,7 +6,8 @@ import LabelOutput from '../LabelOutput';
 import { TxButton } from '../TxButton';
 import useSubstrate from '../../hooks/useSubstrate';
 import { AccountContext } from '../../context/AccountContext';
-import { convertAmount } from '../../utils/conversion';
+import { convertAmount, shortenNumber } from '../../utils/conversion';
+import BigNumber from 'bignumber.js';
 
 export default function PoolLaunch () {
   const { api, keyring } = useSubstrate();
@@ -24,12 +25,10 @@ export default function PoolLaunch () {
   const [exchangeExists, setExchangeExists] = useState(false);
 
   useEffect(() => {
-    if (assetError || ksmAssetError) {
+    if (assetError || ksmAssetError || !assetAmount || !ksmAmount) {
       setPriceInfo('');
     } else {
-      if (ksmAmount && assetAmount) {
-        setPriceInfo(`${getPrice(ksmAmount, assetAmount)} ${assetMap.get(asset).symbol} / KSM`);
-      }
+      setPriceInfo(`${getPrice(ksmAmount, assetAmount)} ${assetMap.get(asset).symbol} / KSM`);
     }
   }, [ksmAmount, asset, assetError, assetAmount, ksmAssetError]);
 
@@ -52,42 +51,24 @@ export default function PoolLaunch () {
       unsubscribe = unsub;
     }).catch(console.error);
     return () => unsubscribe && unsubscribe();
-  }, [asset]);
+  }, [asset, api.query.dexPallet]);
 
   const getPrice = (ksmAmount, assetAmount) => {
-    return (Number.parseFloat(assetAmount) / Number.parseFloat(ksmAmount)).toFixed(6);
+    return shortenNumber(new BigNumber(assetAmount).div(ksmAmount).toString(), 18);
   };
 
-  const validateKsmAsset = (amount) => {
+  useEffect(() => validateAsset(ksmAmount, setKsmAssetError), [ksmAmount]);
+
+  useEffect(() => validateAsset(assetAmount, setAssetError), [assetAmount]);
+
+  useEffect(() => setStatus(''), [asset]);
+
+  const validateAsset = (amount, setErrorFunc) => {
     if (amount && (isNaN(amount) || Number.parseFloat(amount) <= 0)) {
-      setKsmAssetError('invalid amount');
+      setErrorFunc('invalid amount');
     } else {
-      setKsmAssetError('');
+      setErrorFunc('');
     }
-  };
-
-  const validateAsset = (amount) => {
-    if (amount && (isNaN(amount) || Number.parseFloat(amount) <= 0)) {
-      setAssetError('invalid amount');
-    } else {
-      setAssetError('');
-    }
-  };
-
-  const handleChangeKsmAmount = (amount) => {
-    setKsmAmount(amount);
-    validateKsmAsset(amount);
-  };
-
-  const handleChangeAssetAmount = (amount) => {
-    setAssetAmount(amount);
-    validateAsset(amount, asset);
-  };
-
-  const handleChangeAsset = (assetId) => {
-    setAsset(assetId);
-    setStatus('');
-    validateAsset(assetAmount, assetId);
   };
 
   const ksmAssetOptions = assets.filter(asset => asset.assetId === KSM_ASSET_ID).map(({ assetId, symbol, logo }) => ({
@@ -116,7 +97,7 @@ export default function PoolLaunch () {
         label='Deposit'
         placeholder='0.0'
         error={ksmAssetError}
-        onChangeAmount={e => handleChangeKsmAmount(e.target.value)}
+        onChangeAmount={e => setKsmAmount(e.target.value)}
         asset={KSM_ASSET_ID}
         amount={ksmAmount}
       />
@@ -126,8 +107,8 @@ export default function PoolLaunch () {
           label='Deposit'
           placeholder='0.0'
           error={assetError}
-          onChangeAmount={e => handleChangeAssetAmount(e.target.value)}
-          onChangeAsset={(assetId) => handleChangeAsset(assetId)}
+          onChangeAmount={e => setAssetAmount(e.target.value)}
+          onChangeAsset={setAsset}
           asset={asset}
           amount={assetAmount}
         />

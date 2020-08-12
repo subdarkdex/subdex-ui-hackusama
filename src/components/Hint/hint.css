@@ -4,6 +4,7 @@ div.hint {
     font-size: 12px;
     align-items: baseline;
     padding-left: 5px;
+    color: white;
 }
 
 div.hint-text {

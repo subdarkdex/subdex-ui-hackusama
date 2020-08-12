@@ -1,6 +1,6 @@
 import useSubstrate from '../../hooks/useSubstrate';
 import React, { useEffect, useState } from 'react';
-import { convertBalance, shortenBalance } from '../../utils/conversion';
+import { convertBalance, shortenNumber } from '../../utils/conversion';
 import { assetMap } from '../../assets';
 import PropTypes from 'prop-types';
 import 'react-tippy/dist/tippy.css';
@@ -37,7 +37,7 @@ function BalanceAnnotation (props) {
         trigger='mouseenter'
         arrow={true}
       >
-        {shortenBalance(accountBalance)}
+        {shortenNumber(accountBalance)}
       </Tooltip>
       {showAssetSymbol && assetMap.get(assetId).symbol}
     </div>

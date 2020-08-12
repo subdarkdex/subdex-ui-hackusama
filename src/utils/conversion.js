@@ -30,11 +30,11 @@ const convertBalance = (assetId, balance) => {
   return bn.div(denominator);
 };
 
-const shortenBalance = (balance) => {
-  if (balance && balance.length > 9) {
-    return balance.substr(0, 9) + '...';
+const shortenNumber = (number, maxLength = 9) => {
+  if (number && number.length > maxLength) {
+    return number.substr(0, maxLength) + '...';
   }
-  return balance;
+  return number;
 };
 
 const truncDecimals = (asset, amount) => {
@@ -50,4 +50,4 @@ const truncDecimals = (asset, amount) => {
   return amount;
 };
 
-export { conversion as default, convertAmount, convertBalance, shortenBalance, truncDecimals };
+export { conversion as default, convertAmount, convertBalance, shortenNumber, truncDecimals };

@@ -14,6 +14,12 @@ function TokenInput (props) {
     setAssetId(assetId);
     onChangeAsset && onChangeAsset(assetId);
   };
+  const calcFontSize = (value) => {
+    if (!value || value.length < 20) return 19;
+    if (value.length < 25) return 16;
+    if (value.length < 30) return 14;
+    return 12;
+  };
   return (
     <div className="token-input-container">
       <div className="label-error-balance">
@@ -24,7 +30,7 @@ function TokenInput (props) {
         </div>
       </div>
       <div className="input-and-dropdown">
-        <input onChange={onChangeAmount} value={amount} {...rest}/>
+        <input onChange={onChangeAmount} value={amount} {...rest} style={{ fontSize: calcFontSize(amount) }}/>
         <img src={assetMap.get(assetId).logo} alt="" width={22}/>
         <Dropdown
           fluid
