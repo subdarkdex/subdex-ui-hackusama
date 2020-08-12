@@ -9,7 +9,7 @@ import { AccountContext } from '../../context/AccountContext';
 import LabelOutput from '../LabelOutput';
 import { isValidAddress } from '../../utils/address';
 import BigNumber from 'bignumber.js';
-import { convertAmount, convertBalance, truncDecimals } from '../../utils/conversion';
+import { convertAmount, convertBalance, shortenNumber, truncDecimals } from '../../utils/conversion';
 
 export default function Swap () {
   const { api, keyring } = useSubstrate();
@@ -39,14 +39,9 @@ export default function Swap () {
 
   useEffect(() => validateReceiver(receiver), [receiver]);
 
-  useEffect(() => {
-    if (status && status.includes('InBlock')) {
-      setFromAssetAmount('');
-    }
-  }, [status]);
+  useEffect(() => setStatus(''), [fromAsset, fromAssetAmount, toAsset, toAssetAmount, account]);
 
   useEffect(() => {
-    setStatus(null);
     validate(fromAsset, fromAssetAmount, toAsset, toAssetAmount);
     let fromAssetUnsub, toAssetUnsub;
     if (fromAsset === KSM_ASSET_ID) {
@@ -67,7 +62,10 @@ export default function Swap () {
         toAssetUnsub = unsub;
       }).catch(console.error);
     }
-    return () => (fromAssetUnsub && fromAssetUnsub()) || (toAssetUnsub && toAssetUnsub());
+    return () => {
+      fromAssetUnsub && fromAssetUnsub();
+      toAssetUnsub && toAssetUnsub();
+    };
   }, [fromAsset, fromAssetAmount, toAsset, toAssetAmount]);
 
   useEffect(() => {
@@ -95,7 +93,7 @@ export default function Swap () {
       setPrice('');
       setMinReceived('');
     }
-  }, [fromAssetError, fromAssetAmount, toAssetError, fromExchangeExists, toExchangeExists]);
+  }, [fromAssetError, fromAssetAmount, toAssetError, toAsset, fromExchangeExists, toExchangeExists]);
 
   const updateFromAssetStates = (exchange) => {
     if (exchange.get('invariant').toString() === '0') {
@@ -134,11 +132,19 @@ export default function Swap () {
     } else {
       if (fromAssetAmount && (isNaN(fromAssetAmount) || fromAssetAmount <= 0)) {
         setFromAssetError('invalid amount');
+      } else if (fromAsset === KSM_ASSET_ID && !!toKsmPool && new BigNumber(toKsmPool).lte(convertAmount(fromAsset, fromAssetAmount))) {
+        setFromAssetError(`exceeds pool size: ${shortenNumber(convertBalance(KSM_ASSET_ID, toKsmPool).toString(), 8)}`);
+      } else if (!!fromAssetPool && new BigNumber(fromAssetPool).lte(convertAmount(fromAsset, fromAssetAmount))) {
+        setFromAssetError(`exceeds pool size: ${shortenNumber(convertBalance(fromAsset, fromAssetPool).toString(), 8)}`);
       } else {
         setFromAssetError('');
       }
       if (toAssetAmount && (isNaN(toAssetAmount) || toAssetAmount <= 0)) {
         setToAssetError('invalid amount');
+      } else if (toAsset === KSM_ASSET_ID && !!fromKsmPool && new BigNumber(fromKsmPool).lte(convertAmount(toAsset, toAssetAmount))) {
+        setToAssetError(`exceeds pool size: ${shortenNumber(convertBalance(KSM_ASSET_ID, fromKsmPool).toString(), 8)}`);
+      } else if (!!toAssetPool && new BigNumber(toAssetPool).lte(convertAmount(toAsset, toAssetAmount))) {
+        setToAssetError(`exceeds pool size: ${shortenNumber(convertBalance(toAsset, toAssetPool).toString(), 8)}`);
       } else {
         setToAssetError('');
       }
@@ -162,7 +168,7 @@ export default function Swap () {
   };
 
   const inProgress = () => {
-    return !!status && !status.startsWith('Finalized') && !status.startsWith('Error');
+    return !!status && !status.includes('Finalized') && !status.includes('Error');
   };
 
   const options = assets.map(({ assetId, symbol, logo }) => ({
@@ -180,6 +186,8 @@ export default function Swap () {
           options={options}
           label='Send'
           placeholder='Type here'
+          disabled={inProgress()}
+          dropdownDisabled={inProgress()}
           error={fromAssetError}
           onChangeAmount={e => setFromAssetAmount(e.target.value)}
           onChangeAsset={setFromAsset}
@@ -191,6 +199,8 @@ export default function Swap () {
           label='Receive'
           placeholder='Read only'
           error={toAssetError}
+          disabled={inProgress()}
+          dropdownDisabled={inProgress()}
           readOnly={true}
           onChangeAsset={setToAsset}
           asset={toAsset}
@@ -202,6 +212,7 @@ export default function Swap () {
             placeholder='receiving address'
             value={receiver || ''}
             error={receiverError}
+            disabled={inProgress()}
             onChange={e => setReceiver(e.target.value)}
           />
           <LabelOutput label='Price' value={price}/>

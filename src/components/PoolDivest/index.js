@@ -58,7 +58,7 @@ export default function PoolInvest () {
       unsubscribe = unsub;
     }).catch(console.error);
     return () => unsubscribe && unsubscribe();
-  }, [divestAsset, account, api.query.dexPallet]);
+  }, [divestAsset, account]);
 
   const buildSharesInfo = (shares, totalShares) => {
     if (!shares) return '0';
@@ -67,9 +67,9 @@ export default function PoolInvest () {
 
   useEffect(() => {
     if (!divestAssetError && sharesToDivest && ksmPool && totalShares) {
-      const ksmToReceive = new BigNumber(ksmPool).multipliedBy(sharesToDivest).div(totalShares);
+      const ksmToReceive = new BigNumber(ksmPool).multipliedBy(sharesToDivest).div(totalShares).toFixed(0, 1);
       setKsmToReceive(ksmToReceive.toString());
-      const assetToReceive = new BigNumber(tokenPool).multipliedBy(sharesToDivest).div(totalShares);
+      const assetToReceive = new BigNumber(tokenPool).multipliedBy(sharesToDivest).div(totalShares).toFixed(0, 1);
       setAssetToReceive(assetToReceive.toString());
       setDivestInfo(`${convertBalance(KSM_ASSET_ID, ksmToReceive)} KSM + ${convertBalance(divestAsset, assetToReceive)} ${assetMap.get(divestAsset).symbol}`);
     } else {
@@ -80,11 +80,14 @@ export default function PoolInvest () {
   }, [divestAsset, sharesToDivest, divestAssetError, ksmPool, totalShares, tokenPool]);
 
   useEffect(() => {
-    setHint(status);
-    if (status && status.includes('InBlock')) {
-      setSharesToDivest('');
+    if (!status) {
+      setHint(defaultHint);
+    } else {
+      setHint(status);
     }
   }, [status]);
+
+  useEffect(() => setStatus(''), [divestAsset, sharesToDivest, account]);
 
   useEffect(() => {
     if (sharesToDivest && (isNaN(sharesToDivest) || sharesToDivest <= 0)) {
@@ -103,6 +106,10 @@ export default function PoolInvest () {
     image: logo
   }));
 
+  const inProgress = () => {
+    return !!status && !status.includes('Finalized') && !status.includes('Error');
+  };
+
   return (
     <div className='pool-inputs-container'>
       <Hint text={hint}/>
@@ -110,6 +117,8 @@ export default function PoolInvest () {
         options={divestAssetOptions}
         label={'Shares (' + currentAssetShares + ')'}
         placeholder='0.0'
+        disabled={inProgress()}
+        dropdownDisabled={inProgress()}
         error={divestAssetError}
         onChangeAmount={e => setSharesToDivest(e.target.value)}
         onChangeAsset={setDivestAsset}
@@ -128,7 +137,7 @@ export default function PoolInvest () {
       </div>
       <TxButton
         accountPair={accountPair}
-        disabled={divestAssetError}
+        disabled={!!divestAssetError || inProgress()}
         attrs={{
           palletRpc: 'dexPallet',
           callable: 'divestLiquidity',

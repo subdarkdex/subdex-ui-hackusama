@@ -16,10 +16,10 @@ export default function PoolLaunch () {
   const defaultHint = 'Cannot find the pool? Add the desirable token pair and become its first liquidity provider';
   const [hint, setHint] = useState(defaultHint);
   const [status, setStatus] = useState('');
-  const [ksmAmount, setKsmAmount] = useState(null);
+  const [ksmAmount, setKsmAmount] = useState('');
   const [ksmAssetError, setKsmAssetError] = useState('');
   const [asset, setAsset] = useState(EDG_ASSET_ID);
-  const [assetAmount, setAssetAmount] = useState(null);
+  const [assetAmount, setAssetAmount] = useState('');
   const [assetError, setAssetError] = useState('');
   const [priceInfo, setPriceInfo] = useState('');
   const [exchangeExists, setExchangeExists] = useState(false);
@@ -33,7 +33,11 @@ export default function PoolLaunch () {
   }, [ksmAmount, asset, assetError, assetAmount, ksmAssetError]);
 
   useEffect(() => {
-    setHint(status);
+    if (!status) {
+      setHint(defaultHint);
+    } else {
+      setHint(status);
+    }
   }, [status]);
 
   useEffect(() => {
@@ -51,7 +55,7 @@ export default function PoolLaunch () {
       unsubscribe = unsub;
     }).catch(console.error);
     return () => unsubscribe && unsubscribe();
-  }, [asset, api.query.dexPallet]);
+  }, [asset]);
 
   const getPrice = (ksmAmount, assetAmount) => {
     return shortenNumber(new BigNumber(assetAmount).div(ksmAmount).toString(), 18);
@@ -61,7 +65,7 @@ export default function PoolLaunch () {
 
   useEffect(() => validateAsset(assetAmount, setAssetError), [assetAmount]);
 
-  useEffect(() => setStatus(''), [asset]);
+  useEffect(() => setStatus(''), [asset, assetAmount, account]);
 
   const validateAsset = (amount, setErrorFunc) => {
     if (amount && (isNaN(amount) || Number.parseFloat(amount) <= 0)) {
@@ -86,7 +90,7 @@ export default function PoolLaunch () {
   }));
 
   const inProgress = () => {
-    return !!status && !status.startsWith('Finalized') && !status.startsWith('Error');
+    return !!status && !status.includes('Finalized') && !status.includes('Error');
   };
 
   return (
@@ -96,6 +100,8 @@ export default function PoolLaunch () {
         options={ksmAssetOptions}
         label='Deposit'
         placeholder='0.0'
+        disabled={inProgress()}
+        dropdownDisabled={inProgress()}
         error={ksmAssetError}
         onChangeAmount={e => setKsmAmount(e.target.value)}
         asset={KSM_ASSET_ID}
@@ -106,6 +112,8 @@ export default function PoolLaunch () {
           options={assetOptions}
           label='Deposit'
           placeholder='0.0'
+          disabled={inProgress()}
+          dropdownDisabled={inProgress()}
           error={assetError}
           onChangeAmount={e => setAssetAmount(e.target.value)}
           onChangeAsset={setAsset}
@@ -117,7 +125,7 @@ export default function PoolLaunch () {
       </div>
       <TxButton
         accountPair={accountPair}
-        disabled={ksmAssetError || assetError || exchangeExists || inProgress()}
+        disabled={!!ksmAssetError || !!assetError || !!exchangeExists || inProgress()}
         attrs={{
           palletRpc: 'dexPallet',
           callable: 'initializeExchange',

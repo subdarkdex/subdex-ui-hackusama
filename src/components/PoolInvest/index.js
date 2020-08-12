@@ -6,7 +6,7 @@ import LabelOutput from '../LabelOutput';
 import { TxButton } from '../TxButton';
 import useSubstrate from '../../hooks/useSubstrate';
 import { AccountContext } from '../../context/AccountContext';
-import { convertBalance, shortenNumber } from '../../utils/conversion';
+import { convertAmount, convertBalance, shortenNumber } from '../../utils/conversion';
 import BigNumber from 'bignumber.js';
 
 export default function PoolInvest () {
@@ -58,20 +58,22 @@ export default function PoolInvest () {
       unsubscribe = unsub;
     }).catch(console.error);
     return () => unsubscribe && unsubscribe();
-  }, [asset, account, api.query.dexPallet]);
+  }, [asset, account]);
 
   useEffect(() => {
-    setHint(status);
-    if (status && status.includes('InBlock')) {
-      setAssetAmount('');
+    if (!status) {
+      setHint(defaultHint);
+    } else {
+      setHint(status);
     }
   }, [status]);
 
   useEffect(() => {
     if (!ksmAssetError && ksmAmount && ksmPool && tokenPool && totalShares) {
       setAssetAmount(new BigNumber(tokenPool).multipliedBy(ksmAmount).div(ksmPool).toString());
-      setShares(new BigNumber(ksmAmount).multipliedBy(totalShares)
-        .multipliedBy(new BigNumber(10).pow(assetMap.get(KSM_ASSET_ID).decimals)).div(ksmPool).toNumber());
+      setShares(Number.parseInt(
+        new BigNumber(totalShares).multipliedBy(convertAmount(KSM_ASSET_ID, ksmAmount)).div(ksmPool).toFixed(0, 1))
+      );
     } else {
       setAssetAmount('');
       setShares(0);
@@ -81,42 +83,31 @@ export default function PoolInvest () {
   useEffect(() => {
     if (!assetError && assetAmount && ksmPool && tokenPool && totalShares) {
       setKsmAmount(new BigNumber(ksmPool).multipliedBy(assetAmount).div(tokenPool).toString());
-      setShares(new BigNumber(assetAmount).multipliedBy(totalShares)
-        .multipliedBy(new BigNumber(10).pow(assetMap.get(asset).decimals)).div(tokenPool).toNumber());
+      setShares(Number.parseInt(
+        new BigNumber(totalShares).multipliedBy(convertAmount(asset, assetAmount)).div(tokenPool).toFixed(0, 1))
+      );
     } else {
       setKsmAmount('');
       setShares(0);
     }
   }, [assetError, assetAmount]);
 
-  const validateKsmAsset = (amount) => {
+  useEffect(() => validateAsset(ksmAmount, setKsmAssetError), [ksmAmount]);
+
+  useEffect(() => validateAsset(assetAmount, setAssetError), [assetAmount]);
+
+  useEffect(() => setStatus(''), [ksmAmount, assetAmount, asset, account]);
+
+  const validateAsset = (amount, setErrorFunc) => {
     if (amount && (isNaN(amount) || Number.parseFloat(amount) <= 0)) {
-      setKsmAssetError('invalid amount');
+      setErrorFunc('invalid amount');
     } else {
-      setKsmAssetError('');
+      setErrorFunc('');
     }
-  };
-
-  const validateAsset = (amount) => {
-    if (amount && (isNaN(amount) || Number.parseFloat(amount) <= 0)) {
-      setAssetError('invalid amount');
-    } else {
-      setAssetError('');
-    }
-  };
-
-  const handleChangeKsmAmount = (amount) => {
-    setKsmAmount(amount);
-    validateKsmAsset(amount);
-  };
-
-  const handleChangeAssetAmount = (amount) => {
-    setAssetAmount(amount);
-    validateAsset(amount, asset);
   };
 
   const inProgress = () => {
-    return !!status && !status.startsWith('Finalized') && !status.startsWith('Error');
+    return !!status && !status.includes('Finalized') && !status.includes('Error');
   };
 
   const ksmAssetOptions = assets.filter(asset => asset.assetId === KSM_ASSET_ID).map(({ assetId, symbol, logo }) => ({
@@ -141,7 +132,9 @@ export default function PoolInvest () {
         label='Deposit'
         placeholder='0.0'
         error={ksmAssetError}
-        onChangeAmount={e => handleChangeKsmAmount(e.target.value)}
+        disabled={inProgress()}
+        dropdownDisabled={inProgress()}
+        onChangeAmount={e => setKsmAmount(e.target.value)}
         asset={KSM_ASSET_ID}
         amount={ksmAmount}
       />
@@ -151,7 +144,9 @@ export default function PoolInvest () {
           label='Deposit'
           placeholder='0.0'
           error={assetError}
-          onChangeAmount={e => handleChangeAssetAmount(e.target.value)}
+          disabled={inProgress()}
+          dropdownDisabled={inProgress()}
+          onChangeAmount={e => setAssetAmount(e.target.value)}
           onChangeAsset={setAsset}
           asset={asset}
           amount={assetAmount}
