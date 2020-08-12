@@ -8,7 +8,7 @@ import { SubstrateContext } from '../../context/SubstrateContext';
 export default function Node () {
   const { socket } = useSubstrate();
   const [currentSocket, setCurrentSocket] = useState(socket);
-  const [state, dispatch] = useContext(SubstrateContext);
+  const [, dispatch] = useContext(SubstrateContext);
 
   const nodeOptions = endpoints.map(endpoint => ({
     key: endpoint.symbol,

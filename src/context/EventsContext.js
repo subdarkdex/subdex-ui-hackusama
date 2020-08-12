@@ -22,9 +22,9 @@ const EventsContextProvider = (props) => {
             setSwapEvents(e => {
               const copy = [
                 {
-                  soldAsset: assetMap.get(params[0]).symbol,
+                  soldAssetId: params[0],
                   soldAmount: params[1],
-                  boughtAsset: assetMap.get(params[2]).symbol,
+                  boughtAssetId: params[2],
                   boughtAmount: params[3],
                   time: Date.now()
                 },

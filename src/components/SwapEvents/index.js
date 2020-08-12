@@ -2,6 +2,9 @@ import React, { useContext, useState, useEffect } from 'react';
 import { EventsContext } from '../../context/EventsContext';
 import './swap-events.css';
 import describe from '../../utils/time';
+import { convertBalance, shortenBalance } from '../../utils/conversion';
+import { assetMap } from '../../assets';
+import { Tooltip } from 'react-tippy';
 
 export default function SwapEvents () {
   const [currentTime, setCurrentTime] = useState(Date.now());
@@ -23,11 +26,35 @@ export default function SwapEvents () {
       </thead>
       <tbody>
         <tr><td colSpan={3}>&nbsp;</td></tr>
-        { swapEvents.map(({ soldAsset, soldAmount, boughtAsset, boughtAmount, time }) =>
+        { swapEvents.map(({ soldAssetId, soldAmount, boughtAssetId, boughtAmount, time }, index) =>
           (
-            <tr>
-              <td>{soldAmount} {soldAsset}</td>
-              <td>{boughtAmount} {boughtAsset}</td>
+            <tr key={index}>
+              <td>
+                <Tooltip
+                  title={convertBalance(soldAssetId, soldAmount).toString()}
+                  duration={1000}
+                  animation='fade'
+                  position='bottom'
+                  trigger='mouseenter'
+                  arrow={true}
+                >
+                  {shortenBalance(convertBalance(soldAssetId, soldAmount).toString())}
+                </Tooltip>
+                {assetMap.get(soldAssetId).symbol}
+              </td>
+              <td>
+                <Tooltip
+                  title={convertBalance(boughtAssetId, boughtAmount).toString()}
+                  duration={1000}
+                  animation='fade'
+                  position='bottom'
+                  trigger='mouseenter'
+                  arrow={true}
+                >
+                  {shortenBalance(convertBalance(boughtAssetId, boughtAmount).toString())}
+                </Tooltip>
+                {assetMap.get(boughtAssetId).symbol}
+              </td>
               <td>{describe(currentTime - time)} ago</td>
             </tr>
           )

@@ -6,9 +6,10 @@ import describe from '../../utils/time';
 export default function PoolEvents () {
   const [currentTime, setCurrentTime] = useState(Date.now());
   useEffect(() => {
-    setInterval(() => {
+    const interval = setInterval(() => {
       setCurrentTime(Date.now());
     }, 1000);
+    return () => clearInterval(interval);
   }, []);
   const { poolEvents } = useContext(EventsContext);
   return (

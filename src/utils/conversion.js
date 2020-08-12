@@ -17,7 +17,7 @@ const convertAmount = (assetId, amount) => {
     return null;
   }
   const decimals = assetMap.get(assetId).decimals;
-  return Math.trunc(Number.parseFloat(amount).toFixed(decimals) * Math.pow(10, decimals));
+  return new BigNumber(amount).multipliedBy(new BigNumber(10).pow(decimals)).toString();
 };
 
 const convertBalance = (assetId, balance) => {
@@ -30,4 +30,24 @@ const convertBalance = (assetId, balance) => {
   return bn.div(denominator);
 };
 
-export {conversion as default, convertAmount, convertBalance};
+const shortenBalance = (balance) => {
+  if (balance && balance.length > 9) {
+    return balance.substr(0, 9) + '...';
+  }
+  return balance;
+};
+
+const truncDecimals = (asset, amount) => {
+  if (amount && amount.indexOf('.') >= 0) {
+    const index = amount.indexOf('.');
+    const decimals = assetMap.get(asset).decimals;
+    let decimalPart = amount.substr(index + 1);
+    if (decimalPart.length > decimals) {
+      decimalPart = decimalPart.substr(0, decimals);
+    }
+    return amount.substr(0, index + 1) + decimalPart;
+  }
+  return amount;
+};
+
+export { conversion as default, convertAmount, convertBalance, shortenBalance, truncDecimals };

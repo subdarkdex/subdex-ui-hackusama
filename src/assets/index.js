@@ -12,7 +12,7 @@ const assets = [
     symbol: 'KSM',
     logo: ksm,
     name: 'Kusama',
-    decimals: 12,
+    decimals: 12
   },
 
   {
@@ -20,7 +20,7 @@ const assets = [
     symbol: 'BTC',
     logo: btc,
     name: 'Bitcoin',
-    decimals: 12,
+    decimals: 12
   },
 
   {
@@ -28,7 +28,7 @@ const assets = [
     symbol: 'EDG',
     logo: edg,
     name: 'Edgeware',
-    decimals: 12,
+    decimals: 12
   }
 ];
 

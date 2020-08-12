@@ -31,7 +31,7 @@ export default function PoolLaunch () {
         setPriceInfo(`${getPrice(ksmAmount, assetAmount)} ${assetMap.get(asset).symbol} / KSM`);
       }
     }
-  }, [ksmAmount, asset, assetAmount, ksmAssetError]);
+  }, [ksmAmount, asset, assetError, assetAmount, ksmAssetError]);
 
   useEffect(() => {
     setHint(status);

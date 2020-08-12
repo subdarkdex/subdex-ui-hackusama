@@ -12,7 +12,7 @@ div.option-button {
 }
 
 div.selected {
-    font-weight: 600;
+    font-weight: bold;
 }
 
 div.unselected {

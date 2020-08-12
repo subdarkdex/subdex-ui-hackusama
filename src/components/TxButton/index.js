@@ -32,15 +32,20 @@ function TxButton ({
   const isRpc = () => type === 'RPC';
   const isConstant = () => type === 'CONSTANT';
 
-  // const loadSudoKey = () => {
-  //   (async function () {
-  //     if (!api) { return; }
-  //     const sudoKey = await api.query.sudo.key();
-  //     sudoKey.isEmpty ? setSudoKey(null) : setSudoKey(sudoKey.toString());
-  //   })();
-  // };
+  const loadSudoKey = () => {
+    (async function () {
+      if (!api) { return; }
+      const sudo = await api.query.sudo;
+      if (sudo) {
+        const sudoKey = await sudo.key();
+        sudoKey.isEmpty ? setSudoKey(null) : setSudoKey(sudoKey.toString());
+      } else {
+        setSudoKey(null);
+      }
+    })();
+  };
 
-  // useEffect(loadSudoKey, [api]);
+  useEffect(loadSudoKey, [api]);
 
   const getFromAcct = async () => {
     const {
@@ -158,8 +163,8 @@ function TxButton ({
   const transformParams = (paramFields, inputParams, opts = { emptyAsNull: true }) => {
     // if `opts.emptyAsNull` is true, empty param value will be added to res as `null`.
     //   Otherwise, it will not be added
-    const paramVal = inputParams.map(inputParam => typeof inputParam === 'object' ?
-      inputParam.value.trim() : (typeof inputParam === 'string' ? inputParam.trim() : inputParam));
+    const paramVal = inputParams.map(inputParam => typeof inputParam === 'object'
+      ? inputParam.value.trim() : (typeof inputParam === 'string' ? inputParam.trim() : inputParam));
     const params = paramFields.map((field, ind) => ({ ...field, value: paramVal[ind] || null }));
 
     return params.reduce((memo, { type = 'string', value }) => {

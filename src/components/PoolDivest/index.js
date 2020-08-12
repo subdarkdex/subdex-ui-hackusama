@@ -7,7 +7,7 @@ import LabelOutput from '../LabelOutput';
 import useSubstrate from '../../hooks/useSubstrate';
 import { AccountContext } from '../../context/AccountContext';
 import { TxButton } from '../TxButton';
-import { convertBalance } from '../../utils/conversion';
+import { convertBalance, shortenBalance } from '../../utils/conversion';
 import BigNumber from 'bignumber.js';
 
 export default function PoolInvest () {
@@ -16,7 +16,7 @@ export default function PoolInvest () {
   const accountPair = account && keyring.getPair(account);
   const defaultHint = 'Divest your tokens from the liquidity pool by burning your DarkDEX shares';
   const [status, setStatus] = useState('');
-  const [currentAssetShares, setCurrentAssetShares] = useState();
+  const [currentAssetShares, setCurrentAssetShares] = useState(0);
   const [hint, setHint] = useState(defaultHint);
   const [divestAsset, setDivestAsset] = useState(EDG_ASSET_ID);
   const [divestAssetError, setDivestAssetError] = useState('');
@@ -42,16 +42,16 @@ export default function PoolInvest () {
       } else {
         setHint(defaultHint);
         const ksmPoolStr = exchange.get('ksm_pool').toString();
-        const ksmPoolBalance = convertBalance(KSM_ASSET_ID, ksmPoolStr);
+        const ksmPoolBalance = shortenBalance(convertBalance(KSM_ASSET_ID, ksmPoolStr).toString());
         setKsmPool(ksmPoolStr);
         const tokenPoolStr = exchange.get('token_pool').toString();
-        const tokenPoolBalance = convertBalance(divestAsset, tokenPoolStr);
+        const tokenPoolBalance = shortenBalance(convertBalance(divestAsset, tokenPoolStr).toString());
         setTokenPool(tokenPoolStr);
         setPoolInfo(`${ksmPoolBalance} KSM + ${tokenPoolBalance} ${assetMap.get(divestAsset).symbol}`);
         const totalSharesNumber = exchange.get('total_shares').toNumber();
         setTotalShares(totalSharesNumber);
         const sharesInfo = JSON.parse(exchange.get('shares').toString());
-        setCurrentAssetShares(sharesInfo[account]);
+        setCurrentAssetShares(sharesInfo[account] || 0);
         setSharesInfo(sharesInfo[account] ? `${sharesInfo[account] * 100 / totalSharesNumber} %` : '0');
       }
     }).then(unsub => {
