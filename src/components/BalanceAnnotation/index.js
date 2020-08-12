@@ -9,7 +9,7 @@ import { Tooltip } from 'react-tippy';
 function BalanceAnnotation (props) {
   const { assetId, address, className, label, showAssetSymbol } = props;
   const { api } = useSubstrate();
-  const [accountBalance, setAccountBalance] = useState('');
+  const [accountBalance, setAccountBalance] = useState(' '); // KEEP the space, it's required by Tooltip
 
   // When account address changes, update subscriptions
   useEffect(() => {
@@ -30,7 +30,7 @@ function BalanceAnnotation (props) {
     <div className={className}>
       {label || ''}
       <Tooltip
-        title={accountBalance}
+        html={accountBalance}
         duration={1000}
         animation='fade'
         position='bottom'

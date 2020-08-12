@@ -24,7 +24,7 @@ export default function PoolInvest () {
   const [tokenPool, setTokenPool] = useState();
   const [divestInfo, setDivestInfo] = useState('');
   const [sharesToDivest, setSharesToDivest] = useState('');
-  const [totalShares, setTotalShares] = useState(0);
+  const [totalShares, setTotalShares] = useState('');
   const [poolInfo, setPoolInfo] = useState('');
   const [sharesInfo, setSharesInfo] = useState('');
   const [ksmToReceive, setKsmToReceive] = useState('');
@@ -37,28 +37,33 @@ export default function PoolInvest () {
         setHint(`There is no exchange for ${assetMap.get(divestAsset).symbol}, you probably can click Launch button to start the new exchange`);
         setPoolInfo('');
         setSharesInfo('');
-        setTotalShares(0);
+        setTotalShares('');
         setCurrentAssetShares(0);
       } else {
         setHint(defaultHint);
         const ksmPoolStr = exchange.get('ksm_pool').toString();
-        const ksmPoolBalance = shortenNumber(convertBalance(KSM_ASSET_ID, ksmPoolStr).toString());
         setKsmPool(ksmPoolStr);
+        const ksmPoolBalance = shortenNumber(convertBalance(KSM_ASSET_ID, ksmPoolStr).toString());
         const tokenPoolStr = exchange.get('token_pool').toString();
-        const tokenPoolBalance = shortenNumber(convertBalance(divestAsset, tokenPoolStr).toString());
         setTokenPool(tokenPoolStr);
+        const tokenPoolBalance = shortenNumber(convertBalance(divestAsset, tokenPoolStr).toString());
         setPoolInfo(`${ksmPoolBalance} KSM + ${tokenPoolBalance} ${assetMap.get(divestAsset).symbol}`);
-        const totalSharesNumber = exchange.get('total_shares').toNumber();
-        setTotalShares(totalSharesNumber);
+        const totalShares = exchange.get('total_shares').toString();
+        setTotalShares(totalShares);
         const sharesInfo = JSON.parse(exchange.get('shares').toString());
         setCurrentAssetShares(sharesInfo[account] || 0);
-        setSharesInfo(sharesInfo[account] ? `${sharesInfo[account] * 100 / totalSharesNumber} %` : '0');
+        setSharesInfo(buildSharesInfo(sharesInfo[account], totalShares));
       }
     }).then(unsub => {
       unsubscribe = unsub;
     }).catch(console.error);
     return () => unsubscribe && unsubscribe();
-  }, [divestAsset, account]);
+  }, [divestAsset, account, api.query.dexPallet]);
+
+  const buildSharesInfo = (shares, totalShares) => {
+    if (!shares) return '0';
+    return `${new BigNumber(shares).multipliedBy(100).div(totalShares).toFormat(2)} %`;
+  };
 
   useEffect(() => {
     if (!divestAssetError && sharesToDivest && ksmPool && totalShares) {
@@ -68,11 +73,11 @@ export default function PoolInvest () {
       setAssetToReceive(assetToReceive.toString());
       setDivestInfo(`${convertBalance(KSM_ASSET_ID, ksmToReceive)} KSM + ${convertBalance(divestAsset, assetToReceive)} ${assetMap.get(divestAsset).symbol}`);
     } else {
-      setKsmToReceive(undefined);
-      setAssetToReceive(undefined);
+      setKsmToReceive('');
+      setAssetToReceive('');
       setDivestInfo('');
     }
-  }, [divestAsset, sharesToDivest]);
+  }, [divestAsset, sharesToDivest, divestAssetError, ksmPool, totalShares, tokenPool]);
 
   useEffect(() => {
     setHint(status);
@@ -81,20 +86,15 @@ export default function PoolInvest () {
     }
   }, [status]);
 
-  const validateSharesToDivest = (amount) => {
-    if (amount && isNaN(amount)) {
+  useEffect(() => {
+    if (sharesToDivest && (isNaN(sharesToDivest) || sharesToDivest <= 0)) {
       setDivestAssetError('invalid amount');
-    } else if (Number.parseFloat(amount) > currentAssetShares) {
+    } else if (Number.parseFloat(sharesToDivest) > currentAssetShares) {
       setDivestAssetError('not enough shares');
     } else {
       setDivestAssetError('');
     }
-  };
-
-  const handleChangeSharesToDivest = (amount) => {
-    setSharesToDivest(amount);
-    validateSharesToDivest(amount, divestAsset);
-  };
+  }, [sharesToDivest, currentAssetShares]);
 
   const divestAssetOptions = assets.filter(asset => asset.assetId !== KSM_ASSET_ID).map(({ assetId, symbol, logo }) => ({
     key: assetId,
@@ -111,7 +111,7 @@ export default function PoolInvest () {
         label={'Shares (' + currentAssetShares + ')'}
         placeholder='0.0'
         error={divestAssetError}
-        onChangeAmount={e => handleChangeSharesToDivest(e.target.value)}
+        onChangeAmount={e => setSharesToDivest(e.target.value)}
         onChangeAsset={setDivestAsset}
         asset={divestAsset}
         amount={sharesToDivest}
