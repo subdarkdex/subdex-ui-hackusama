@@ -1,6 +1,4 @@
-# Dark DEX Index
-
-## Using The Template
+# SubDEX UI
 
 ### Installation
 
@@ -8,8 +6,8 @@ The code can be installed using [git](https://git-scm.com/) and [yarn](https://y
 
 ```bash
 # Clone the repository
-git clone https://github.com/subdarkdex/darkdex-ui.git
-cd ./darkdex-ui
+git clone https://github.com/subdarkdex/subdex-ui.git
+cd ./subdex-ui
 yarn install
 ```
 
