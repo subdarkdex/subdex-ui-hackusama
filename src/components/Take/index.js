@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Tabs from '../Tabs';
 import LabelInput from '../LabelInput';
 import { TxButton } from '../TxButton';
 
 export default function Take () {
+
+  const [, setStatus] = useState('');
+
   const [publicInput, setPublicInput] = useState('');
   const [publicInputError, setPublicInputError] = useState('');
 
@@ -13,17 +16,29 @@ export default function Take () {
   const [privateWitness, setPrivateWitness] = useState('');
   const [privateWitnessError, setPrivateWitnessError] = useState('');
 
-  const handleChangePublicInput = (message) => {
-    setPublicInput(message);
-  };
+  useEffect(() => {
+    if (publicInput) {
+      setPublicInputError('we are working on this');
+    } else {
+      setPublicInputError('');
+    }
+  }, [publicInput]);
 
-  const handleChangeProvingKey = (message) => {
-    setProvingKey(message);
-  };
+  useEffect(() => {
+    if (provingKey) {
+      setProvingKeyError('we are working on this');
+    } else {
+      setProvingKeyError('');
+    }
+  }, [provingKey]);
 
-  const handleChangePrivateWitness = (message) => {
-    setPrivateWitness(message);
-  };
+  useEffect(() => {
+    if (privateWitness) {
+      setPrivateWitnessError('we are working on this');
+    } else {
+      setPrivateWitnessError('');
+    }
+  }, [privateWitness]);
 
   return (
     <>
@@ -34,30 +49,31 @@ export default function Take () {
           placeholder='Provide the public input.'
           value={publicInput || ''}
           error={publicInputError}
-          onChange={e => handleChangePublicInput(e.target.value)}
+          onChange={e => setPublicInput(e.target.value)}
         />
         <LabelInput
           label='Proving key'
           placeholder='Provide the proving key.'
           value={provingKey || ''}
           error={provingKeyError}
-          onChange={e => handleChangeProvingKey(e.target.value)}
+          onChange={e => setProvingKey(e.target.value)}
         />
         <LabelInput
           label='Private witness'
           placeholder='Provide the private witness.'
           value={privateWitness || ''}
           error={privateWitnessError}
-          onChange={e => handleChangePrivateWitness(e.target.value)}
+          onChange={e => setPrivateWitness(e.target.value)}
         />
         <TxButton
           disabled={publicInputError || provingKeyError || privateWitnessError}
           attrs={{
-            palletRpc: 'dexTakeModule',
-            callable: 'withdrawSwappedToken',
+            palletRpc: 'dexPallet',
+            callable: 'withdraw',
             inputParams: [publicInput, provingKey, privateWitness],
             paramFields: [false, false, false]
           }}
+          setStatus={setStatus}
           type='SIGNED-TX'
           label='Withdraw'
         />
