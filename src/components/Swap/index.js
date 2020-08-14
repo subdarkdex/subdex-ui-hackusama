@@ -220,7 +220,7 @@ export default function Swap () {
         </div>
         <TxButton
           accountPair={accountPair}
-          disabled={ !!fromAssetError || !!toAssetError || inProgress() }
+          disabled={ !!fromAssetError || !!toAssetError || !!receiverError || inProgress() }
           attrs={{
             palletRpc: 'dexPallet',
             callable: 'swap',
