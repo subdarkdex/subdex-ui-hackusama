@@ -7,9 +7,10 @@ import shorten from '../../utils/address';
 export default function TakeEvents () {
   const [currentTime, setCurrentTime] = useState(Date.now());
   useEffect(() => {
-    setInterval(() => {
+    const interval = setInterval(() => {
       setCurrentTime(Date.now());
     }, 1000);
+    return () => clearInterval(interval);
   }, []);
   const { takeEvents } = useContext(EventsContext);
   return (
