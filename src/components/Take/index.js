@@ -4,7 +4,6 @@ import LabelInput from '../LabelInput';
 import { TxButton } from '../TxButton';
 
 export default function Take () {
-
   const [, setStatus] = useState('');
 
   const [publicInput, setPublicInput] = useState('');
