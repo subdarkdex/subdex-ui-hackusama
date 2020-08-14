@@ -40,6 +40,7 @@ export default function SwapEvents () {
                 >
                   {shortenNumber(convertBalance(soldAssetId, soldAmount).toString())}
                 </Tooltip>
+                &nbsp;
                 {assetMap.get(soldAssetId).symbol}
               </td>
               <td>
@@ -53,6 +54,7 @@ export default function SwapEvents () {
                 >
                   {shortenNumber(convertBalance(boughtAssetId, boughtAmount).toString())}
                 </Tooltip>
+                &nbsp;
                 {assetMap.get(boughtAssetId).symbol}
               </td>
               <td>{describe(currentTime - time)} ago</td>
