@@ -84,7 +84,7 @@ function TxButton ({
 
     const unsub = txExecute.signAndSend(fromAcct, txResHandler)
       .catch(txErrHandler);
-    setUnsub(() => unsub);
+    setUnsub(unsub);
   };
 
   const uncheckedSudoTx = async () => {
@@ -94,7 +94,7 @@ function TxButton ({
 
     const unsub = txExecute.signAndSend(fromAcct, txResHandler)
       .catch(txErrHandler);
-    setUnsub(() => unsub);
+    setUnsub(unsub);
   };
 
   const signedTx = async () => {
@@ -108,7 +108,7 @@ function TxButton ({
 
     const unsub = await txExecute.signAndSend(fromAcct, txResHandler)
       .catch(txErrHandler);
-    setUnsub(() => unsub);
+    setUnsub(unsub);
   };
 
   const unsignedTx = async () => {
@@ -120,7 +120,7 @@ function TxButton ({
 
     const unsub = await txExecute.send(txResHandler)
       .catch(txErrHandler);
-    setUnsub(() => unsub);
+    setUnsub(unsub);
   };
 
   const queryResHandler = result =>
@@ -129,13 +129,13 @@ function TxButton ({
   const query = async () => {
     const transformed = transformParams(paramFields, inputParams);
     const unsub = await api.query[palletRpc][callable](...transformed, queryResHandler);
-    setUnsub(() => unsub);
+    setUnsub(unsub);
   };
 
   const rpc = async () => {
     const transformed = transformParams(paramFields, inputParams, { emptyAsNull: false });
     const unsub = await api.rpc[palletRpc][callable](...transformed, queryResHandler);
-    setUnsub(() => unsub);
+    setUnsub(unsub);
   };
 
   const constant = () => {

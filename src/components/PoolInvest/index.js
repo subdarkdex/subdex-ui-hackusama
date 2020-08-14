@@ -11,7 +11,7 @@ import BigNumber from 'bignumber.js';
 
 export default function PoolInvest () {
   const { api, keyring } = useSubstrate();
-  const { account } = useContext(AccountContext);
+  const { account, balances } = useContext(AccountContext);
   const accountPair = account && keyring.getPair(account);
   const defaultHint = 'Invest your tokens to the liquidity pool and earn 3% of the trading fees';
   const [status, setStatus] = useState('');
@@ -69,38 +69,30 @@ export default function PoolInvest () {
   }, [status]);
 
   useEffect(() => {
-    if (!ksmAssetError && ksmAmount && ksmPool && tokenPool && totalShares) {
+    if (ksmAmount && !isNaN(ksmAmount) && Number.parseFloat(ksmAmount) > 0 && ksmPool && tokenPool && totalShares) {
       setAssetAmount(new BigNumber(tokenPool).multipliedBy(ksmAmount).div(ksmPool).toString());
       setShares(Number.parseInt(
         new BigNumber(totalShares).multipliedBy(convertAmount(KSM_ASSET_ID, ksmAmount)).div(ksmPool).toFixed(0, 1))
       );
     } else {
-      setAssetAmount('');
       setShares(0);
+      if (!ksmAmount) {
+        setAssetAmount('');
+      }
     }
-  }, [ksmAssetError, ksmAmount]);
+  }, [ksmAmount]);
 
-  useEffect(() => {
-    if (!assetError && assetAmount && ksmPool && tokenPool && totalShares) {
-      setKsmAmount(new BigNumber(ksmPool).multipliedBy(assetAmount).div(tokenPool).toString());
-      setShares(Number.parseInt(
-        new BigNumber(totalShares).multipliedBy(convertAmount(asset, assetAmount)).div(tokenPool).toFixed(0, 1))
-      );
-    } else {
-      setKsmAmount('');
-      setShares(0);
-    }
-  }, [assetError, assetAmount]);
+  useEffect(() => validateAsset(ksmAmount, KSM_ASSET_ID, setKsmAssetError), [ksmAmount, balances, setKsmAssetError]);
 
-  useEffect(() => validateAsset(ksmAmount, setKsmAssetError), [ksmAmount]);
-
-  useEffect(() => validateAsset(assetAmount, setAssetError), [assetAmount]);
+  useEffect(() => validateAsset(assetAmount, asset, setAssetError), [assetAmount, asset, balances, setAssetError]);
 
   useEffect(() => setStatus(''), [ksmAmount, assetAmount, asset, account]);
 
-  const validateAsset = (amount, setErrorFunc) => {
+  const validateAsset = (amount, assetId, setErrorFunc) => {
     if (amount && (isNaN(amount) || Number.parseFloat(amount) <= 0)) {
       setErrorFunc('invalid amount');
+    } else if (balances.get(assetId) && balances.get(assetId).lte(new BigNumber(amount))){
+      setErrorFunc('exceeds the balance');
     } else {
       setErrorFunc('');
     }
@@ -130,7 +122,7 @@ export default function PoolInvest () {
       <TokenInput
         options={ksmAssetOptions}
         label='Deposit'
-        placeholder='0.0'
+        placeholder='Type here'
         error={ksmAssetError}
         disabled={inProgress()}
         dropdownDisabled={inProgress()}
@@ -142,8 +134,9 @@ export default function PoolInvest () {
         <TokenInput
           options={assetOptions}
           label='Deposit'
-          placeholder='0.0'
+          placeholder='Read only'
           error={assetError}
+          readOnly={true}
           disabled={inProgress()}
           dropdownDisabled={inProgress()}
           onChangeAmount={e => setAssetAmount(e.target.value)}

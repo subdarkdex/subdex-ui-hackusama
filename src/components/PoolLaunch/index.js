@@ -11,7 +11,7 @@ import BigNumber from 'bignumber.js';
 
 export default function PoolLaunch () {
   const { api, keyring } = useSubstrate();
-  const { account } = useContext(AccountContext);
+  const { account, balances } = useContext(AccountContext);
   const accountPair = account && keyring.getPair(account);
   const defaultHint = 'Cannot find the pool? Add the desirable token pair and become its first liquidity provider';
   const [hint, setHint] = useState(defaultHint);
@@ -61,15 +61,17 @@ export default function PoolLaunch () {
     return shortenNumber(new BigNumber(assetAmount).div(ksmAmount).toString(), 18);
   };
 
-  useEffect(() => validateAsset(ksmAmount, setKsmAssetError), [ksmAmount]);
+  useEffect(() => validateAsset(ksmAmount, KSM_ASSET_ID, setKsmAssetError), [ksmAmount, balances]);
 
-  useEffect(() => validateAsset(assetAmount, setAssetError), [assetAmount]);
+  useEffect(() => validateAsset(assetAmount, asset, setAssetError), [assetAmount, asset, balances]);
 
   useEffect(() => setStatus(''), [asset, assetAmount, account]);
 
-  const validateAsset = (amount, setErrorFunc) => {
+  const validateAsset = (amount, assetId, setErrorFunc) => {
     if (amount && (isNaN(amount) || Number.parseFloat(amount) <= 0)) {
       setErrorFunc('invalid amount');
+    } else if (balances.get(assetId) && balances.get(assetId).lte(new BigNumber(amount))) {
+      setErrorFunc('exceeds the balance');
     } else {
       setErrorFunc('');
     }

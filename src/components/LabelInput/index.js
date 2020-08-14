@@ -7,7 +7,7 @@ function LabelInput (props) {
   const calcFontSize = (value) => {
     if (!value || value.length < 20) return 19;
     if (value.length < 36) return 16;
-    if (value.length < 45) return 14;
+    if (value.length < 45) return 13;
     if (value.length < 48) return 12;
     return 10;
   };

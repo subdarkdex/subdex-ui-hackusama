@@ -13,7 +13,7 @@ import { convertAmount, convertBalance, shortenNumber, truncDecimals } from '../
 
 export default function Swap () {
   const { api, keyring } = useSubstrate();
-  const { account } = useContext(AccountContext);
+  const { account, balances } = useContext(AccountContext);
   const accountPair = account && keyring.getPair(account);
   const [status, setStatus] = useState('');
   const [fromAsset, setFromAsset] = useState(KSM_ASSET_ID);
@@ -136,6 +136,8 @@ export default function Swap () {
         setFromAssetError(`exceeds pool size: ${shortenNumber(convertBalance(KSM_ASSET_ID, toKsmPool).toString(), 8)}`);
       } else if (!!fromAssetPool && new BigNumber(fromAssetPool).lte(convertAmount(fromAsset, fromAssetAmount))) {
         setFromAssetError(`exceeds pool size: ${shortenNumber(convertBalance(fromAsset, fromAssetPool).toString(), 8)}`);
+      } else if (balances.get(fromAsset) && balances.get(fromAsset).lte(new BigNumber(fromAssetAmount))) {
+        setFromAssetError('exceeds the balance');
       } else {
         setFromAssetError('');
       }
@@ -145,6 +147,8 @@ export default function Swap () {
         setToAssetError(`exceeds pool size: ${shortenNumber(convertBalance(KSM_ASSET_ID, fromKsmPool).toString(), 8)}`);
       } else if (!!toAssetPool && new BigNumber(toAssetPool).lte(convertAmount(toAsset, toAssetAmount))) {
         setToAssetError(`exceeds pool size: ${shortenNumber(convertBalance(toAsset, toAssetPool).toString(), 8)}`);
+      } else if (balances.get(toAsset) && balances.get(toAsset).lte(new BigNumber(toAssetAmount))) {
+        setToAssetError('exceeds the balance');
       } else {
         setToAssetError('');
       }
