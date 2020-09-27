@@ -6,8 +6,8 @@ The code can be installed using [git](https://git-scm.com/) and [yarn](https://y
 
 ```bash
 # Clone the repository
-git clone https://github.com/subdarkdex/subdex-ui.git
-cd ./subdex-ui
+git clone https://github.com/subdarkdex/subdex-ui-hackusama.git
+cd ./subdex-ui-hackusama
 yarn install
 ```
 
