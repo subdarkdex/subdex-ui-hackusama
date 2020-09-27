@@ -1,4 +1,4 @@
-# SubDEX UI
+# SubDEX UI - Deprecated
 
 ### Installation
 
